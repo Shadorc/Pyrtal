@@ -3,17 +3,17 @@
 from tkinter import *
 from math import *
 
-def createPortal(event, color):
+def createPortal(mouse, color):
     #Logs are love, Logs are life. #oui
-    chaine.configure(text = "Click spotted in X =" + str(event.x) +", Y =" + str(event.y))
+    chaine.configure(text = "Click spotted in X =" + str(mouse.x) +", Y =" + str(mouse.y))
     
-    elements = []
-    elements += [salle.create_oval(event.x-50, event.y-150, event.x+50, event.y+150, fill=color)]
-    elements += [salle.create_oval(event.x-45, event.y-145, event.x+45, event.y+145, fill='white')]
+    portal = []
+    portal += [salle.create_oval(mouse.x-50, mouse.y-150, mouse.x+50, mouse.y+150, fill=color)]
+    portal += [salle.create_oval(mouse.x-45, mouse.y-145, mouse.x+45, mouse.y+145, fill='white')]
     
     salle.update()
     
-    return elements
+    return portal
     
 #Blue portal
 def bluePortal(event):
@@ -41,7 +41,7 @@ xmax=1000
 ymax=1000
 
 frame = Tk()
-frame.title("PORTAAAAAAAAAAAAAAAAAAAAAAAAAL")
+frame.title("Portal")
 
 salle = Canvas(frame, width=xmax, height=ymax)
 
