@@ -8,10 +8,14 @@ def createPortal(mouse, color):
     chaine.configure(text = "Click spotted in X =" + str(mouse.x) +", Y =" + str(mouse.y))
     
     portal = []
-    portal += [salle.create_oval(mouse.x-50, mouse.y-150, mouse.x+50, mouse.y+150, fill=color)]
-    portal += [salle.create_oval(mouse.x-45, mouse.y-145, mouse.x+45, mouse.y+145, fill='white')]
-    
-    salle.update()
+
+    #Roof or floor, lying portal
+    if(mouse.y < 125 or mouse.y > 875):
+        portal += [salle.create_oval(mouse.x-150, mouse.y-50, mouse.x+150, mouse.y+50, fill=color)]
+        portal += [salle.create_oval(mouse.x-145, mouse.y-45, mouse.x+145, mouse.y+45, fill='white')]
+    else:
+        portal += [salle.create_oval(mouse.x-50, mouse.y-150, mouse.x+50, mouse.y+150, fill=color)]
+        portal += [salle.create_oval(mouse.x-45, mouse.y-145, mouse.x+45, mouse.y+145, fill='white')]
     
     return portal
     
@@ -37,8 +41,8 @@ def delete(elements):
 bluePortalElements = []
 orangePortalElements = []
 
-xmax=1000
-ymax=1000
+xmax = 1000
+ymax = 1000
 
 frame = Tk()
 frame.title("Portal")
@@ -54,14 +58,14 @@ salle.create_line([1000, 1000, 875, 875])
 salle.create_line([1000, 0, 875, 125])
 salle.create_line([0, 0, 125, 125])
 
+# Binding mouse #
 salle.bind("<Button-1>", bluePortal)
 salle.bind("<Button-2>", delete)
 salle.bind("<Button-3>", orangePortal)
 
-photo=PhotoImage(file="Portal_Dude2.gif")
-salle.create_image(500, 900, image=photo)                          #Portal Dude early *access* version#
-
-salle.update()
+#Portal Dude early *access* version#
+photo = PhotoImage(file = "Portal_Dude2.gif")
+salle.create_image(500, 900, image=photo)                         
 
 chaine = Label(frame)
 chaine.pack()
