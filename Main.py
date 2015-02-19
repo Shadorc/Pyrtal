@@ -13,9 +13,11 @@ def createPortal(mouse, color):
     if(mouse.y < 125 or mouse.y > 875):
         portal += [salle.create_oval(mouse.x-150, mouse.y-50, mouse.x+150, mouse.y+50, fill=color)]
         portal += [salle.create_oval(mouse.x-145, mouse.y-45, mouse.x+145, mouse.y+45, fill='white')]
+
     else:
         portal += [salle.create_oval(mouse.x-50, mouse.y-150, mouse.x+50, mouse.y+150, fill=color)]
         portal += [salle.create_oval(mouse.x-45, mouse.y-145, mouse.x+45, mouse.y+145, fill='white')]
+    
     
     return portal
     
@@ -30,6 +32,20 @@ def orangePortal(event):
     global orangePortalElements
     delete(orangePortalElements)  
     orangePortalElements = createPortal(event, '#ff6600')
+
+def move(gd, hb): 
+    global x1, y1 
+    x1, y1 = x1 +gd, y1 +hb 
+    can1.coords(oval1, x1,y1, x1+30,y1+30) 
+
+def depl_left(event): 
+    move(-20, 0) 
+def depl_right(event): 
+    move(20, 0) 
+def depl_up(event): 
+    move(0, -20) 
+def depl_down(event): 
+    move(0, 20) 
     
 def delete(elements):
     #Undraw all objects containing by elements array
@@ -43,12 +59,14 @@ orangePortalElements = []
 
 xmax = 1000
 ymax = 1000
+x1, y1 = 500, 900
 
 frame = Tk()
 frame.title("Portal")
 
 salle = Canvas(frame, width=xmax, height=ymax)
 
+oval1 = salle.create_rectangle(x1,y1,x1+30,y1+30,width=2,fill='orange') 
 # Fond de salle #
 salle.create_rectangle(125,875,875,125)
 
@@ -60,13 +78,17 @@ salle.create_line([0, 0, 125, 125])
 
 # Binding mouse #
 salle.bind("<Button-1>", bluePortal)
-salle.bind("<Button-2>", delete)
 salle.bind("<Button-3>", orangePortal)
 
-#Portal Dude early *access* version#
-photo = PhotoImage(file = "Portal_Dude2.gif")
-salle.create_image(500, 900, image=photo)                         
+# Binding Keyboard #
+salle.bind("<Up>", depl_up)
+salle.bind("<Left>", depl_left)
+salle.bind("<Down>", depl_down)
+salle.bind("<Right>", depl_right)
 
+#Portal Dude early *access* version#
+                
+print(salle.find_closest(50,50)) 
 chaine = Label(frame)
 chaine.pack()
 salle.pack()
