@@ -13,16 +13,17 @@ def createPortal(mouse, color):
     if(mouse.y < 125 or mouse.y > 875):
         portal += [salle.create_oval(mouse.x-150, mouse.y-50, mouse.x+150, mouse.y+50, fill=color)]
         portal += [salle.create_oval(mouse.x-145, mouse.y-45, mouse.x+145, mouse.y+45, fill='white')]
+
     else:
         portal += [salle.create_oval(mouse.x-50, mouse.y-150, mouse.x+50, mouse.y+150, fill=color)]
         portal += [salle.create_oval(mouse.x-45, mouse.y-145, mouse.x+45, mouse.y+145, fill='white')]
-
+        
     return portal
     
 #Blue portal
 def bluePortal(event):
     global bluePortalElements
-    delete(bluePortalElements)   
+    delete(bluePortalElements)
     bluePortalElements = createPortal(event, '#6699ff')
 
 #Orange Portal   
@@ -32,35 +33,62 @@ def orangePortal(event):
     orangePortalElements = createPortal(event, '#ff6600')
 
 #Moving fuctions
-def move_left(event): 
-    move(-20, 0) 
-def move_right(event): 
-    move(20, 0) 
-def move_up(event): 
-    move(0, -20) 
-def move_down(event): 
-    move(0, 20)
-
 def move(moveX, moveY): 
-    global x, y, oval
+    global x, y, dude
     x += moveX
     y += moveY
-    salle.delete(oval)
-    oval = salle.create_rectangle(x, y, x+30, y+30, width=2, fill='orange') 
+    salle.delete(dude)
+    photo=PhotoImage(file="PortalDude2.gif")   
+    dude = salle.create_image(x,y, image=photo)
+    salle.coords(dude,x,y,moveX,moveY)
+
+    salle.update()
     
+def move_left(event):
+    if 100 <= x <= 920:
+        move(-20, 0)
+    else:
+        move(0,0)
+
+def move_right(event):
+    if 80 <= x <= 900:
+        move(20, 0)
+    else:
+        move(0,0)
+
+
+    
+def move_up(event): 
+    if 850 <= y <= 900:
+        move(0, -20)
+    else:
+        move(0,0)
+
+
+    
+def move_down(event): 
+    if 820 <= y <= 880:
+        move(0, 20)
+    else:
+        move(0,0)
+    
+
+   
 def delete(elements):
     #Undraw all objects containing by elements array
     for obj in elements:
         salle.delete(obj)
     #Reset elements array
     elements = []
+  
 
 bluePortalElements = []
 orangePortalElements = []
 
 frameW = 1000
 frameH = 1000
-#Dude coordinate
+
+    #Dude coordinate
 x = 500
 y = 900
 
@@ -91,10 +119,22 @@ salle.bind("<Left>", move_left)
 salle.bind("<Down>", move_down)
 salle.bind("<Right>", move_right)
 
-oval = salle.create_rectangle(x, y, x+30,y+30, width=2, fill='orange')
+"""
+photo=PhotoImage(file="PortalDude2.gif")
+salle.create_image(500, 900, image=photo)                          #Portal Dude early *access* version#
+
+salle.update()
+"""
+
+#oval = salle.create_rectangle(x, y, x+30,y+30, width=2, fill='orange')
+photo=PhotoImage(file="PortalDude2.gif")
+dude = salle.create_image(x, y, image=photo)
+
 
 chaine = Label(frame)
 chaine.pack()
 salle.pack()
 
 frame.mainloop()
+
+raw_input()
