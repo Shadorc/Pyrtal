@@ -47,12 +47,16 @@ def move_right(event):
         move(20, 0)
     
 def move_up(event): 
-    if 850 <= y <= 900:
+    if 830 <= y <= 900:
         move(0, -20)
     
 def move_down(event): 
-    if 820 <= y <= 880:
-        move(0, 20) 
+    if 810 <= y <= 880:
+        move(0, 20)
+
+def gravity():
+    if y < 810:
+        move(0, 20)
    
 def delete(elements):
     #Undraw all objects containing by elements array
@@ -73,7 +77,7 @@ x = 500
 y = 900
 
 frame = Tk()
-frame.title("Portal")
+frame.title("Pyrtal")
 
 salle = Canvas(frame, width=frameW, height=frameH)
 
