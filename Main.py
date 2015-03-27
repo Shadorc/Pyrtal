@@ -104,6 +104,7 @@ salle.create_line([0, 0, 125, 125])
 #Set focus to catch mouse and keyboard input
 salle.focus_set()
 
+# Binding Mouse and Keyboard #
 salle.bind("<Button-1>", bluePortal)
 salle.bind("<Button-3>", orangePortal)
 salle.bind("<KeyPress>", move)
