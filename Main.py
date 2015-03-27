@@ -1,7 +1,7 @@
-# Portal Main #
-
 from tkinter import *
 from math import *
+import time
+import threading 
 
 def createPortal(mouse, color):
     #Logs are love, Logs are life. #oui
@@ -32,27 +32,38 @@ def orangePortal(event):
     orangePortalElements = createPortal(event, '#ff6600')
 
 #Moving fuctions
-def move(moveX, moveY): 
+def move(event):
     global x, y, dude
-    x += moveX
-    y += moveY
-    salle.coords(dude, x, y)
-    
-def move_left(event):
-    if 100 <= x <= 920:
-        move(-20, 0)
+    speed = 20
 
-def move_right(event):
-    if 80 <= x <= 900:
-        move(20, 0)
-    
-def move_up(event): 
-    if 830 <= y <= 900:
-        move(0, -20)
-    
-def move_down(event): 
-    if 810 <= y <= 880:
-        move(0, 20)
+    #Move up
+    if (event.char == 'z') and (810 <= y):
+        y -= speed
+    #Move down
+    elif (event.char == 's') and (y <= 910):
+        y += speed
+    #Move left
+    elif (event.char == 'q') and (100 <= x):
+        x -= speed
+    #Move right
+    elif (event.char == 'd') and (x <= 900):
+        x += speed
+        
+    elif (event.char == ' '):
+        a = threading.Thread(None, explosion, None, (), {}) 
+        a.start() 
+
+    salle.coords(dude, x, y)
+
+
+def explosion():
+    global y
+    text = salle.create_text(x+100, y, text="The Game")
+    while y > -100:
+            y -= 1
+            time.sleep(0.01)
+            salle.coords(dude, x, y)
+            salle.coords(text, x+100, y)
 
 def gravity():
     if y < 810:
@@ -64,7 +75,7 @@ def delete(elements):
         salle.delete(obj)
     #Reset elements array
     elements = []
-  
+
 
 bluePortalElements = []
 orangePortalElements = []
@@ -93,15 +104,9 @@ salle.create_line([0, 0, 125, 125])
 #Set focus to catch mouse and keyboard input
 salle.focus_set()
 
-# Binding mouse #
 salle.bind("<Button-1>", bluePortal)
 salle.bind("<Button-3>", orangePortal)
-
-# Binding Keyboard #
-salle.bind("<Up>", move_up)
-salle.bind("<Left>", move_left)
-salle.bind("<Down>", move_down)
-salle.bind("<Right>", move_right)
+salle.bind("<KeyPress>", move)
 
 photo = PhotoImage(file="PortalDude2.gif")
 dude = salle.create_image(x, y, image=photo)
