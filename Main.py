@@ -3,60 +3,94 @@ from math import *
 import time
 import threading 
 
-class portal():
+class Portal():
+    def __init__(self, mouse, color):
+        self.x = mouse.x
+        self.y = mouse.y
+        self.elements = []
+        self.color = color
 
-    def createPortal(self, mouse, color):
         #Logs are love, Logs are life. #oui
         chaine.configure(text = "Click spotted in X =" + str(mouse.x) +", Y =" + str(mouse.y))
-        
-        self.portal = []
 
+        global salle, dude
         #Roof or floor, lying portal
         if(mouse.y < 125 or mouse.y > 875):
-            self.portal += [salle.create_oval(mouse.x-150, mouse.y-50, mouse.x+150, mouse.y+50, fill=color)]
-            self.portal += [salle.create_oval(mouse.x-145, mouse.y-45, mouse.x+145, mouse.y+45, fill='white')]
+            self.elements += [salle.create_oval(mouse.x-150, mouse.y-55, mouse.x+150, mouse.y+55, fill=color)]
+            self.elements += [salle.create_oval(mouse.x-145, mouse.y-50, mouse.x+145, mouse.y+50, fill='white')]
+            self.width = 300
+            self.height = 110
         else:
-            self.portal += [salle.create_oval(mouse.x-50, mouse.y-150, mouse.x+50, mouse.y+150, fill=color)]
-            self.portal += [salle.create_oval(mouse.x-45, mouse.y-145, mouse.x+45, mouse.y+145, fill='white')]
+            self.elements += [salle.create_oval(mouse.x-55, mouse.y-150, mouse.x+55, mouse.y+150, fill=color)]
+            self.elements += [salle.create_oval(mouse.x-50, mouse.y-145, mouse.x+50, mouse.y+145, fill='white')]
+            self.width = 110
+            self.height = 300
             
-        return self.portal
+        dude.firstPlan()
+
+       
+    def delete(self):
+        #Undraw all objects containing by elements array
+        for obj in self.elements:
+            salle.delete(obj)
+
+class Dude():
+    def __init__(self, x, y):
+        global salle
+        self.x = x
+        self.y = y
+        self.width = 115
+        self.height = 168
+        self.photo = PhotoImage(file="PortalDude2.gif")
+        self.image = salle.create_image(self.x, self.y, image = self.photo)
+
+    #Moving fuctions
+    def move(self, event):
+        speed = 20
+
+        #Move up
+        if (event.char == 'z') and (810 <= self.y):
+            self.y -= speed
+        #Move down
+        elif (event.char == 's') and (self.y <= 910):
+            self.y += speed
+        #Move left
+        elif (event.char == 'q') and (100 <= self.x):
+            self.x -= speed
+        #Move right
+        elif (event.char == 'd') and (self.x <= 900):
+            self.x += speed
+            
+        elif (event.char == ' '):
+            a = threading.Thread(None, explosion, None, (), {}) 
+            a.start() 
+
+        salle.coords(self.image, self.x, self.y)
+
+    def firstPlan(self):
+        global salle
+        salle.delete(self.image)
+        self.image = salle.create_image(self.x, self.y, image = self.photo)
         
-    #Blue portal
-    def bluePortal(self, event):
-        self.bluePortalElements = []
-        delete(bluePortalElements)
-        self.bluePortalElements = self.createPortal(event, '#6699ff')
 
-    #Orange Portal   
-    def orangePortal(self, event):
-        self.orangePortalElements = []
-        delete(self.orangePortalElements)  
-        self.orangePortalElements = self.createPortal(event, '#ff6600')
-
-#Moving fuctions
-def move(event):
-    global x, y, dude
-    speed = 20
-
-    #Move up
-    if (event.char == 'z') and (810 <= y):
-        y -= speed
-    #Move down
-    elif (event.char == 's') and (y <= 910):
-        y += speed
-    #Move left
-    elif (event.char == 'q') and (100 <= x):
-        x -= speed
-    #Move right
-    elif (event.char == 'd') and (x <= 900):
-        x += speed
+    
+#Blue portal
+def bluePortal(event):
+    global bluePortal
+    portalBisB = bluePortal
+    bluePortal = Portal(event, '#6699ff')
+    portalBisB.delete()
         
-    elif (event.char == ' '):
-        a = threading.Thread(None, explosion, None, (), {}) 
-        a.start() 
+#Orange Portal   
+def orangePortal(event):
+    global orangePortal
+    portalBisO = orangePortal
+    orangePortal = Portal(event, '#ff6600')
+    portalBisO.delete()
 
-    salle.coords(dude, x, y)
-
+def checkHitbox():
+    global dude, bluePortal, orangePortal
+    #if(
 
 def explosion():
     global y
@@ -70,29 +104,16 @@ def explosion():
 def gravity():
     if y < 810:
         move(0, 20)
-   
-def delete(elements):
-    #Undraw all objects containing by elements array
-    for obj in elements:
-        salle.delete(obj)
-    #Reset elements array
-    elements = []
-
-
-#portal.bluePortalElements = []
-#portal.orangePortalElements = []
 
 frameW = 1000
 frameH = 1000
-
-#Dude coordinate
-x = 500
-y = 900
 
 frame = Tk()
 frame.title("Pyrtal")
 
 salle = Canvas(frame, width=frameW, height=frameH)
+dude = Dude(500, 900)
+dude.firstPlan()
 
 # Back of the room #
 salle.create_rectangle(125,875,875,125)
@@ -107,12 +128,9 @@ salle.create_line([0, 0, 125, 125])
 salle.focus_set()
 
 # Binding Mouse and Keyboard #
-salle.bind("<Button-1>", portal.bluePortal)
-salle.bind("<Button-3>", portal.orangePortal)
-salle.bind("<KeyPress>", move)
-
-photo = PhotoImage(file="PortalDude2.gif")
-dude = salle.create_image(x, y, image=photo)
+salle.bind("<Button-1>", bluePortal)
+salle.bind("<Button-3>", orangePortal)
+salle.bind("<KeyPress>", dude.move)
 
 chaine = Label(frame)
 chaine.pack()
