@@ -3,33 +3,35 @@ from math import *
 import time
 import threading 
 
-def createPortal(mouse, color):
-    #Logs are love, Logs are life. #oui
-    chaine.configure(text = "Click spotted in X =" + str(mouse.x) +", Y =" + str(mouse.y))
-    
-    portal = []
+class portal():
 
-    #Roof or floor, lying portal
-    if(mouse.y < 125 or mouse.y > 875):
-        portal += [salle.create_oval(mouse.x-150, mouse.y-50, mouse.x+150, mouse.y+50, fill=color)]
-        portal += [salle.create_oval(mouse.x-145, mouse.y-45, mouse.x+145, mouse.y+45, fill='white')]
-    else:
-        portal += [salle.create_oval(mouse.x-50, mouse.y-150, mouse.x+50, mouse.y+150, fill=color)]
-        portal += [salle.create_oval(mouse.x-45, mouse.y-145, mouse.x+45, mouse.y+145, fill='white')]
+    def createPortal(self, mouse, color):
+        #Logs are love, Logs are life. #oui
+        chaine.configure(text = "Click spotted in X =" + str(mouse.x) +", Y =" + str(mouse.y))
         
-    return portal
-    
-#Blue portal
-def bluePortal(event):
-    global bluePortalElements
-    delete(bluePortalElements)
-    bluePortalElements = createPortal(event, '#6699ff')
+        self.portal = []
 
-#Orange Portal   
-def orangePortal(event):
-    global orangePortalElements
-    delete(orangePortalElements)  
-    orangePortalElements = createPortal(event, '#ff6600')
+        #Roof or floor, lying portal
+        if(mouse.y < 125 or mouse.y > 875):
+            self.portal += [salle.create_oval(mouse.x-150, mouse.y-50, mouse.x+150, mouse.y+50, fill=color)]
+            self.portal += [salle.create_oval(mouse.x-145, mouse.y-45, mouse.x+145, mouse.y+45, fill='white')]
+        else:
+            self.portal += [salle.create_oval(mouse.x-50, mouse.y-150, mouse.x+50, mouse.y+150, fill=color)]
+            self.portal += [salle.create_oval(mouse.x-45, mouse.y-145, mouse.x+45, mouse.y+145, fill='white')]
+            
+        return self.portal
+        
+    #Blue portal
+    def bluePortal(self, event):
+        self.bluePortalElements = []
+        delete(bluePortalElements)
+        self.bluePortalElements = self.createPortal(event, '#6699ff')
+
+    #Orange Portal   
+    def orangePortal(self, event):
+        self.orangePortalElements = []
+        delete(self.orangePortalElements)  
+        self.orangePortalElements = self.createPortal(event, '#ff6600')
 
 #Moving fuctions
 def move(event):
@@ -77,8 +79,8 @@ def delete(elements):
     elements = []
 
 
-bluePortalElements = []
-orangePortalElements = []
+#portal.bluePortalElements = []
+#portal.orangePortalElements = []
 
 frameW = 1000
 frameH = 1000
@@ -105,8 +107,8 @@ salle.create_line([0, 0, 125, 125])
 salle.focus_set()
 
 # Binding Mouse and Keyboard #
-salle.bind("<Button-1>", bluePortal)
-salle.bind("<Button-3>", orangePortal)
+salle.bind("<Button-1>", portal.bluePortal)
+salle.bind("<Button-3>", portal.orangePortal)
 salle.bind("<KeyPress>", move)
 
 photo = PhotoImage(file="PortalDude2.gif")
