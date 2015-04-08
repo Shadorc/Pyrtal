@@ -1,7 +1,8 @@
 from tkinter import *
 from math import *
 import time
-import threading 
+import threading
+from rectangle import Rect
 
 class Portal():
     def __init__(self, mouse, color):
@@ -25,6 +26,8 @@ class Portal():
             self.elements += [salle.create_oval(mouse.x-50, mouse.y-145, mouse.x+50, mouse.y+145, fill='white')]
             self.width = 110
             self.height = 300
+
+        self.hitbox = Rect(self.x, self.y, self.width, self.height)
             
         dude.firstPlan()
 
@@ -43,6 +46,7 @@ class Dude():
         self.height = 168
         self.photo = PhotoImage(file="PortalDude2.gif")
         self.image = salle.create_image(self.x, self.y, image = self.photo)
+        self.hitbox = Rect(self.x, self.y, self.width, self.height)
 
     #Moving fuctions
     def move(self, event):
@@ -66,12 +70,18 @@ class Dude():
             a.start() 
 
         salle.coords(self.image, self.x, self.y)
+        checkHitbox()
 
     def firstPlan(self):
         global salle
         salle.delete(self.image)
         self.image = salle.create_image(self.x, self.y, image = self.photo)
-        
+
+    def teleport(self, x, y):
+        self.x = x
+        self.y = y
+        salle.coords(self.image, self.x, self.y)
+        self.firstPlan()
 
     
 #Blue portal
@@ -90,7 +100,10 @@ def orangePortal(event):
 
 def checkHitbox():
     global dude, bluePortal, orangePortal
-    #if(
+    if(bluePortal.hitbox.intersects(dude.hitbox)):
+        dude.teleport(orangePortal.x, orangePortal.y)
+    elif(orangePortal.hitbox.intersects(dude.hitbox)):
+        dude.teleport(bluePortal.x, bluePortal.y) 
 
 def explosion():
     global y
@@ -100,10 +113,6 @@ def explosion():
             time.sleep(0.01)
             salle.coords(dude, x, y)
             salle.coords(text, x+100, y)
-
-def gravity():
-    if y < 810:
-        move(0, 20)
 
 frameW = 1000
 frameH = 1000
