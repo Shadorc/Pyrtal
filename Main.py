@@ -40,6 +40,7 @@ class Dude():
         self.photo = PhotoImage(file="PortalDude2.gif")
         self.image = salle.create_image(self.x, self.y, image = self.photo)
         self.hitbox = Rect(self.x, self.y, self.width, self.height)
+        self.isGoingDown = False
 
     #Moving fuctions
     def move(self, event):
@@ -72,26 +73,29 @@ class Dude():
         checkHitbox()
 
     def goDown(self):
-        while(self.y <= 810):
-            self.y += 5
-            salle.coords(self.image, self.x, self.y)
-            salle.update()
-            time.sleep(0.01)
-            self.hitbox = Rect(self.x, self.y, self.width, self.height)
-
-        checkHitbox()
+        if(dude.isGoingDown == False):
+            dude.isGoingDown = True
+            while(self.y <= 810):
+                self.y += 5
+                salle.coords(self.image, self.x, self.y)
+                salle.update()
+                time.sleep(0.01)
+                self.hitbox = Rect(self.x, self.y, self.width, self.height)
+            dude.isGoingDown = False
+            checkHitbox()
 
     def firstPlan(self):
         salle.delete(self.image)
         self.image = salle.create_image(self.x, self.y, image = self.photo)
+        salle.update()
 
     def teleport(self, x, y):
-        self.x = x
-        self.y = y
-        salle.coords(self.image, self.x, self.y)
-        self.firstPlan()
-        salle.update()
-        dude.goDown()
+        if(dude.isGoingDown == False):
+            self.x = x
+            self.y = y
+            salle.coords(self.image, self.x, self.y)
+            self.firstPlan()
+            self.goDown()
 
     
 #Blue portal
@@ -127,7 +131,6 @@ frame.title("Pyrtal")
 
 salle = Canvas(frame, width=frameW, height=frameH)
 dude = Dude(500, 900)
-dude.firstPlan()
 
 bluePortal = None
 orangePortal = None
