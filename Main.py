@@ -1,7 +1,6 @@
 from tkinter import *
 from math import *
 import time
-import threading
 from rectangle import Rect
 
 class Portal():
@@ -10,9 +9,6 @@ class Portal():
         self.y = mouse.y
         self.elements = []
         self.color = color
-
-        #Logs are love, Logs are life. #oui
-        chaine.configure(text = "Click spotted in X =" + str(mouse.x) +", Y =" + str(mouse.y))
 
         global salle, dude
         #Roof or floor, lying portal
@@ -28,9 +24,7 @@ class Portal():
             self.height = 300
 
         self.hitbox = Rect(self.x, self.y, self.width, self.height)
-            
         dude.firstPlan()
-
        
     def delete(self):
         #Undraw all objects containing by elements array
@@ -39,7 +33,6 @@ class Portal():
 
 class Dude():
     def __init__(self, x, y):
-        global salle
         self.x = x
         self.y = y
         self.width = 115
@@ -64,10 +57,15 @@ class Dude():
         #Move right
         elif (event.char == 'd') and (self.x <= 900):
             self.x += speed
-            
+        #The Game Easter Egg
         elif (event.char == ' '):
-            a = threading.Thread(None, explosion, None, (), {}) 
-            a.start() 
+            text = salle.create_text(self.x+100, self.y, text="The Game")
+            while self.y > -100:
+                self.y -= 1
+                time.sleep(0.01)
+                salle.coords(self.image, self.x, self.y)
+                salle.coords(text, self.x+100, self.y)
+                salle.update()
 
         salle.coords(self.image, self.x, self.y)
         self.hitbox = Rect(self.x, self.y, self.width, self.height)
@@ -79,11 +77,11 @@ class Dude():
             salle.coords(self.image, self.x, self.y)
             salle.update()
             time.sleep(0.01)
+            self.hitbox = Rect(self.x, self.y, self.width, self.height)
 
         checkHitbox()
 
     def firstPlan(self):
-        global salle
         salle.delete(self.image)
         self.image = salle.create_image(self.x, self.y, image = self.photo)
 
@@ -93,42 +91,34 @@ class Dude():
         salle.coords(self.image, self.x, self.y)
         self.firstPlan()
         salle.update()
-        a = threading.Thread(None, self.goDown, None, (), {}) 
-        a.start()
+        dude.goDown()
 
     
 #Blue portal
-def bluePortal(event):
+def createBluePortal(event):
     global bluePortal
     portalBisB = bluePortal
     bluePortal = Portal(event, '#6699ff')
-    portalBisB.delete()
+    if(portalBisB != None):
+        portalBisB.delete()
         
 #Orange Portal   
-def orangePortal(event):
+def createOrangePortal(event):
     global orangePortal
     portalBisO = orangePortal
     orangePortal = Portal(event, '#ff6600')
-    portalBisO.delete()
+    if(portalBisO != None):
+        portalBisO.delete()
 
 def checkHitbox():
     global dude, bluePortal, orangePortal
-    if(bluePortal.hitbox.intersects(dude.hitbox)):
-        dude.teleport(orangePortal.x, orangePortal.y)
-    elif(orangePortal.hitbox.intersects(dude.hitbox)):
-        dude.teleport(bluePortal.x, bluePortal.y)
-    a = threading.Thread(None, dude.goDown, None, (), {}) 
-    a.start()
-
-def explosion():
-    global y
-    text = salle.create_text(x+100, y, text="The Game")
-    while y > -100:
-            y -= 1
-            time.sleep(0.01)
-            salle.coords(dude, x, y)
-            salle.coords(text, x+100, y)
-
+    if(bluePortal != None and orangePortal != None):
+        if(bluePortal.hitbox.intersects(dude.hitbox)):
+            dude.teleport(orangePortal.x, orangePortal.y)
+        elif(orangePortal.hitbox.intersects(dude.hitbox)):
+            dude.teleport(bluePortal.x, bluePortal.y)
+        #dude.goDown()
+    
 frameW = 1000
 frameH = 1000
 
@@ -138,6 +128,9 @@ frame.title("Pyrtal")
 salle = Canvas(frame, width=frameW, height=frameH)
 dude = Dude(500, 900)
 dude.firstPlan()
+
+bluePortal = None
+orangePortal = None
 
 # Back of the room #
 salle.create_rectangle(125,875,875,125)
@@ -152,8 +145,8 @@ salle.create_line([0, 0, 125, 125])
 salle.focus_set()
 
 # Binding Mouse and Keyboard #
-salle.bind("<Button-1>", bluePortal)
-salle.bind("<Button-3>", orangePortal)
+salle.bind("<Button-1>", createBluePortal)
+salle.bind("<Button-3>", createOrangePortal)
 salle.bind("<KeyPress>", dude.move)
 
 chaine = Label(frame)
