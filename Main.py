@@ -70,6 +70,16 @@ class Dude():
             a.start() 
 
         salle.coords(self.image, self.x, self.y)
+        self.hitbox = Rect(self.x, self.y, self.width, self.height)
+        checkHitbox()
+
+    def goDown(self):
+        while(self.y <= 810):
+            self.y += 5
+            salle.coords(self.image, self.x, self.y)
+            salle.update()
+            time.sleep(0.01)
+
         checkHitbox()
 
     def firstPlan(self):
@@ -82,6 +92,9 @@ class Dude():
         self.y = y
         salle.coords(self.image, self.x, self.y)
         self.firstPlan()
+        salle.update()
+        a = threading.Thread(None, self.goDown, None, (), {}) 
+        a.start()
 
     
 #Blue portal
@@ -103,7 +116,9 @@ def checkHitbox():
     if(bluePortal.hitbox.intersects(dude.hitbox)):
         dude.teleport(orangePortal.x, orangePortal.y)
     elif(orangePortal.hitbox.intersects(dude.hitbox)):
-        dude.teleport(bluePortal.x, bluePortal.y) 
+        dude.teleport(bluePortal.x, bluePortal.y)
+    a = threading.Thread(None, dude.goDown, None, (), {}) 
+    a.start()
 
 def explosion():
     global y
