@@ -23,13 +23,15 @@ class Portal():
             self.width = 110
             self.height = 300
 
-        self.hitbox = Rect(self.x, self.y, self.width, self.height)
         dude.firstPlan()
        
     def delete(self):
         #Undraw all objects containing by elements array
         for obj in self.elements:
             salle.delete(obj)
+
+    def getHitbox(self):
+        return Rect(self.x, self.y, self.width, self.height)
 
 class Dude():
     def __init__(self, x, y):
@@ -39,7 +41,6 @@ class Dude():
         self.height = 168
         self.photo = PhotoImage(file="PortalDude2.gif")
         self.image = salle.create_image(self.x, self.y, image = self.photo)
-        self.hitbox = Rect(self.x, self.y, self.width, self.height)
         self.isGoingDown = False
 
     #Moving fuctions
@@ -69,7 +70,6 @@ class Dude():
                 salle.update()
 
         salle.coords(self.image, self.x, self.y)
-        self.hitbox = Rect(self.x, self.y, self.width, self.height)
         checkHitbox()
 
     def goDown(self):
@@ -80,7 +80,6 @@ class Dude():
                 salle.coords(self.image, self.x, self.y)
                 salle.update()
                 time.sleep(0.01)
-                self.hitbox = Rect(self.x, self.y, self.width, self.height)
             dude.isGoingDown = False
             checkHitbox()
 
@@ -96,6 +95,9 @@ class Dude():
             salle.coords(self.image, self.x, self.y)
             self.firstPlan()
             self.goDown()
+
+    def getHitbox(self):
+        return Rect(self.x, self.y, self.width, self.height)
 
     
 #Blue portal
@@ -117,9 +119,9 @@ def createOrangePortal(event):
 def checkHitbox():
     global dude, bluePortal, orangePortal
     if(bluePortal != None and orangePortal != None):
-        if(bluePortal.hitbox.intersects(dude.hitbox)):
+        if(bluePortal.getHitbox().intersects(dude.getHitbox())):
             dude.teleport(orangePortal.x, orangePortal.y)
-        elif(orangePortal.hitbox.intersects(dude.hitbox)):
+        elif(orangePortal.getHitbox().intersects(dude.getHitbox())):
             dude.teleport(bluePortal.x, bluePortal.y)
         #dude.goDown()
     
