@@ -18,13 +18,21 @@ class Portal():
             self.width = 110
             self.height = 300
 
+        #Coordonnées de l'angle en haut à gauche
+        self.topX = self.centerX-self.width/2
+        self.topY = self.centerY-self.height/2
+
+        #Coordonnées de l'angle en bas à droite
+        self.botX = self.centerX+self.width/2
+        self.botY = self.centerY+self.height/2
+        
         #Epaisseur du portail
         thickness = 5
 
         #Dans l'angle supérieur gauche, il faut enlever du rayon, dans l'angle inférieur droit, il faut en rajouter
-        self.elements += [salle.create_oval(self.centerX-self.width/2,           self.centerY-self.height/2,           self.centerX+self.width/2,           self.centerY+self.height/2,           fill=color)]
-        self.elements += [salle.create_oval(self.centerX-self.width/2+thickness, self.centerY-self.height/2+thickness, self.centerX+self.width/2-thickness, self.centerY+self.height/2-thickness, fill='white')]
-        self.elements += [salle.create_rectangle(self.centerX, self.centerY, self.width+self.centerX, self.centerY+self.height)]
+        self.elements += [salle.create_oval(self.topX,           self.topY,           self.botX,           self.botY,           fill=color)]
+        self.elements += [salle.create_oval(self.topX+thickness, self.topY+thickness, self.botX-thickness, self.botY-thickness, fill='white')]
+        self.elements += [salle.create_rectangle(self.topX, self.topY, self.botX, self.botY)]
  
         dude.firstPlan()
        
@@ -34,7 +42,7 @@ class Portal():
             salle.delete(obj)
 
     def getHitbox(self):
-        return Rect(self.x, self.y, self.width, self.height)
+        return Rect(self.topX, self.topY, self.width, self.height)
 
 class Dude():
     def __init__(self, x, y):
