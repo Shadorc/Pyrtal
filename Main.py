@@ -12,16 +12,20 @@ class Portal():
         global salle, dude
         #Sol & Plafond : Portail horizontal
         if(mouse.y < 125 or mouse.y > 875):
-            self.elements += [salle.create_oval(self.x-150, self.y-55, self.x+150, self.y+55, fill=color)]
-            self.elements += [salle.create_oval(self.x-145, self.y-50, self.x+145, self.y+50, fill='white')]
             self.width = 300
             self.height = 110
         else:
-            self.elements += [salle.create_oval(self.x-55, self.y-150, self.x+55, self.y+150, fill=color)]
-            self.elements += [salle.create_oval(self.x-50, self.y-145, self.x+50, self.y+145, fill='white')]
             self.width = 110
             self.height = 300
 
+        #Epaisseur du portail
+        thickness = 5
+
+        #Dans l'angle supérieur gauche, il faut enlever du rayon, dans l'angle inférieur droit, il faut en rajouter
+        self.elements += [salle.create_oval(self.centerX-self.width/2,           self.centerY-self.height/2,           self.centerX+self.width/2,           self.centerY+self.height/2,           fill=color)]
+        self.elements += [salle.create_oval(self.centerX-self.width/2+thickness, self.centerY-self.height/2+thickness, self.centerX+self.width/2-thickness, self.centerY+self.height/2-thickness, fill='white')]
+        self.elements += [salle.create_rectangle(self.centerX, self.centerY, self.width+self.centerX, self.centerY+self.height)]
+ 
         dude.firstPlan()
        
     def delete(self):
