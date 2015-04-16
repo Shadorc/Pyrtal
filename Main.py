@@ -49,10 +49,11 @@ class Dude():
         self.x = x
         self.y = y
         self.photo = PhotoImage(file="PortalDude2.gif")
-        self.image = salle.create_image(self.x, self.y, image = self.photo)
+        self.image = salle.create_image(self.x, self.y, image=self.photo, anchor=NW)
         self.width = self.photo.width()
         self.height = self.photo.height()
         self.isGoingDown = False
+        self.debug = 0
 
     #Mouvements
     def move(self, event):
@@ -80,6 +81,8 @@ class Dude():
                 salle.coords(text, self.x+100, self.y)
                 salle.update()
 
+        salle.delete(self.debug)
+        self.debug = salle.create_rectangle(self.x, self.y, self.x+self.width, self.y+self.height)
         salle.coords(self.image, self.x, self.y)
         checkHitbox()
 
@@ -96,7 +99,7 @@ class Dude():
 
     def firstPlan(self):
         salle.delete(self.image)
-        self.image = salle.create_image(self.x, self.y, image = self.photo)
+        self.image = salle.create_image(self.x, self.y, image=self.photo, anchor=NW)
         salle.update()
 
     def teleport(self, x, y):
