@@ -11,22 +11,22 @@ class Portal():
         self.color = color
 
         global salle, dude
-        #Roof or floor, lying portal
+        #Sol & Plafond : Portail horizontal
         if(mouse.y < 125 or mouse.y > 875):
-            self.elements += [salle.create_oval(mouse.x-150, mouse.y-55, mouse.x+150, mouse.y+55, fill=color)]
-            self.elements += [salle.create_oval(mouse.x-145, mouse.y-50, mouse.x+145, mouse.y+50, fill='white')]
+            self.elements += [salle.create_oval(self.x-150, self.y-55, self.x+150, self.y+55, fill=color)]
+            self.elements += [salle.create_oval(self.x-145, self.y-50, self.x+145, self.y+50, fill='white')]
             self.width = 300
             self.height = 110
         else:
-            self.elements += [salle.create_oval(mouse.x-55, mouse.y-150, mouse.x+55, mouse.y+150, fill=color)]
-            self.elements += [salle.create_oval(mouse.x-50, mouse.y-145, mouse.x+50, mouse.y+145, fill='white')]
+            self.elements += [salle.create_oval(self.x-55, self.y-150, self.x+55, self.y+150, fill=color)]
+            self.elements += [salle.create_oval(self.x-50, self.y-145, self.x+50, self.y+145, fill='white')]
             self.width = 110
             self.height = 300
 
         dude.firstPlan()
        
     def delete(self):
-        #Undraw all objects containing by elements array
+        #Efface tous les éléments contenus dans la liste
         for obj in self.elements:
             salle.delete(obj)
 
@@ -43,20 +43,20 @@ class Dude():
         self.image = salle.create_image(self.x, self.y, image = self.photo)
         self.isGoingDown = False
 
-    #Moving fuctions
+    #Mouvements
     def move(self, event):
         speed = 20
 
-        #Move up
+        #Haut
         if (event.char == 'z') and (810 <= self.y):
             self.y -= speed
-        #Move down
+        #Bas
         elif (event.char == 's') and (self.y <= 910):
             self.y += speed
-        #Move left
+        #Gauche
         elif (event.char == 'q') and (100 <= self.x):
             self.x -= speed
-        #Move right
+        #Droite
         elif (event.char == 'd') and (self.x <= 900):
             self.x += speed
         #The Game Easter Egg
@@ -100,7 +100,7 @@ class Dude():
         return Rect(self.x, self.y, self.width, self.height)
 
     
-#Blue portal
+#Portail Bleu
 def createBluePortal(event):
     global bluePortal
     portalBisB = bluePortal
@@ -108,7 +108,7 @@ def createBluePortal(event):
     if(portalBisB != None):
         portalBisB.delete()
         
-#Orange Portal   
+#Portail Orange  
 def createOrangePortal(event):
     global orangePortal
     portalBisO = orangePortal
@@ -137,19 +137,19 @@ dude = Dude(500, 900)
 bluePortal = None
 orangePortal = None
 
-# Back of the room #
+#Fond de la salle
 salle.create_rectangle(125,875,875,125)
 
-# Depth  #
+#Effet de profondeur (lignes diagonales)
 salle.create_line([0, 1000, 125, 875])
 salle.create_line([1000, 1000, 875, 875])                                                       
 salle.create_line([1000, 0, 875, 125])
 salle.create_line([0, 0, 125, 125])
 
-#Set focus to catch mouse and keyboard input
+#Focus sur la fenêtre pour pouvoir recevoir les clics de souris et l'appuie de touches
 salle.focus_set()
 
-# Binding Mouse and Keyboard #
+#Configure les touches souris / clavier
 salle.bind("<Button-1>", createBluePortal)
 salle.bind("<Button-3>", createOrangePortal)
 salle.bind("<KeyPress>", dude.move)
