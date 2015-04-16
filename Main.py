@@ -60,16 +60,16 @@ class Dude():
         speed = 20
 
         #Haut
-        if (event.char == 'z') and (810 <= self.y):
+        if (event.char == 'z') and (800 <= self.y+self.height):
             self.y -= speed
         #Bas
-        elif (event.char == 's') and (self.y <= 910):
+        elif (event.char == 's') and (self.y+self.height <= 890):
             self.y += speed
         #Gauche
-        elif (event.char == 'q') and (100 <= self.x):
+        elif (event.char == 'q') and (140 <= self.x):
             self.x -= speed
         #Droite
-        elif (event.char == 'd') and (self.x <= 900):
+        elif (event.char == 'd') and (self.x+self.width <= 855):
             self.x += speed
         #The Game Easter Egg
         elif (event.char == ' '):
@@ -139,25 +139,29 @@ def checkHitbox():
             dude.teleport(bluePortal.centerX, bluePortal.centerY)
     
 frameW = 1000
-frameH = 1000
+frameH = 900
 
 frame = Tk()
 frame.title("Pyrtal")
 
 salle = Canvas(frame, width=frameW, height=frameH)
-dude = Dude(500, 900)
+dude = Dude(500, 700)
 
 bluePortal = None
 orangePortal = None
 
 #Fond de la salle
-salle.create_rectangle(125,875,875,125)
+salle.create_rectangle(125,788,875,112)
 
-#Effet de profondeur (lignes diagonales)
-salle.create_line([0, 1000, 125, 875])
-salle.create_line([1000, 1000, 875, 875])                                                       
-salle.create_line([1000, 0, 875, 125])
-salle.create_line([0, 0, 125, 125])
+"""Effet de profondeur (lignes diagonales)"""
+#Bas gauche
+salle.create_line(0, frameH, 125, 788)
+#Bas droit
+salle.create_line(frameW, frameH, 875, 788)
+#Haut droit
+salle.create_line(frameW, 0, 875, 112)
+#Haut gauche
+salle.create_line(0, 0, 125, 112)
 
 #Focus sur la fenêtre pour pouvoir recevoir les clics de souris et l'appuie de touches
 salle.focus_set()
