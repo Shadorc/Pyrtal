@@ -8,8 +8,7 @@ class Portal():
         self.x = mouse.x
         self.y = mouse.y
         self.elements = []
-        self.color = color
-
+        
         global salle, dude
         #Sol & Plafond : Portail horizontal
         if(mouse.y < 125 or mouse.y > 875):
@@ -37,10 +36,10 @@ class Dude():
     def __init__(self, x, y):
         self.x = x
         self.y = y
-        self.width = 115
-        self.height = 168
         self.photo = PhotoImage(file="PortalDude2.gif")
         self.image = salle.create_image(self.x, self.y, image = self.photo)
+        self.width = self.photo.width()
+        self.height = self.photo.height()
         self.isGoingDown = False
 
     #Mouvements
@@ -123,7 +122,6 @@ def checkHitbox():
             dude.teleport(orangePortal.x, orangePortal.y)
         elif(orangePortal.getHitbox().intersects(dude.getHitbox())):
             dude.teleport(bluePortal.x, bluePortal.y)
-        #dude.goDown()
     
 frameW = 1000
 frameH = 1000
