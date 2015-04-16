@@ -89,7 +89,7 @@ class Dude():
     def goDown(self):
         if(dude.isGoingDown == False):
             dude.isGoingDown = True
-            while(self.y <= 810):
+            while(self.y+self.height <= 800):
                 self.y += 5
                 salle.coords(self.image, self.x, self.y)
                 salle.update()
@@ -145,7 +145,7 @@ frame = Tk()
 frame.title("Pyrtal")
 
 salle = Canvas(frame, width=frameW, height=frameH)
-dude = Dude(500, 700)
+dude = Dude(450, 700)
 
 bluePortal = None
 orangePortal = None
