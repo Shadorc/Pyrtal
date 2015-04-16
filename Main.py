@@ -5,8 +5,8 @@ from rectangle import Rect
 
 class Portal():
     def __init__(self, mouse, color):
-        self.x = mouse.x
-        self.y = mouse.y
+        self.centerX = mouse.x
+        self.centerY = mouse.y
         self.elements = []
         
         global salle, dude
@@ -119,9 +119,9 @@ def checkHitbox():
     global dude, bluePortal, orangePortal
     if(bluePortal != None and orangePortal != None):
         if(bluePortal.getHitbox().intersects(dude.getHitbox())):
-            dude.teleport(orangePortal.x, orangePortal.y)
+            dude.teleport(orangePortal.centerX, orangePortal.centerY)
         elif(orangePortal.getHitbox().intersects(dude.getHitbox())):
-            dude.teleport(bluePortal.x, bluePortal.y)
+            dude.teleport(bluePortal.centerX, bluePortal.centerY)
     
 frameW = 1000
 frameH = 1000
