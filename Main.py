@@ -11,7 +11,7 @@ class Portal():
         
         global salle, dude
         #Sol & Plafond : Portail horizontal
-        if(mouse.y < 125 or mouse.y > 875):
+        if(mouse.y < 125 or mouse.y > 788):
             self.width = 300
             self.height = 110
         else:
