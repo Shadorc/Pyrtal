@@ -11,7 +11,7 @@ class Portal():
         
         global salle, dude
         #Sol & Plafond : Portail horizontal
-        if(self.centerX < 125 or self.centerY > 788):
+        if(self.centerY < 125 or self.centerY > 788):
             self.width = 300
             self.height = 110
         else:
@@ -162,6 +162,8 @@ def createBluePortal(event):
         salle.delete(line)
         line = salle.create_line(x, y, orangePortal.centerX, orangePortal.centerY)
 
+    checkHitbox()
+
 #Portail Orange  
 def createOrangePortal(event):
     global orangePortal
@@ -207,6 +209,8 @@ def createOrangePortal(event):
         global line
         salle.delete(line)
         line = salle.create_line(x, y, bluePortal.centerX, bluePortal.centerY)
+
+    checkHitbox()
 
 def checkHitbox():
     global dude, bluePortal, orangePortal
