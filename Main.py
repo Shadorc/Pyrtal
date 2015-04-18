@@ -4,7 +4,7 @@ import time
 from rectangle import Rect
 
 class Portal():
-    def __init__(self, mouse, color):
+    def __init__(self, mouse, color, visible):
         self.centerX = mouse.x
         self.centerY = mouse.y
         self.elements = []
@@ -29,12 +29,13 @@ class Portal():
         #Epaisseur du portail
         thickness = 5
 
-        #Dans l'angle supérieur gauche, il faut enlever du rayon, dans l'angle inférieur droit, il faut en rajouter
-        self.elements += [salle.create_oval(self.topX,           self.topY,           self.botX,           self.botY,           fill=color)]
-        self.elements += [salle.create_oval(self.topX+thickness, self.topY+thickness, self.botX-thickness, self.botY-thickness, fill='white')]
-        self.elements += [salle.create_rectangle(self.topX, self.topY, self.botX, self.botY)]
+        if(visible):
+            #Dans l'angle supérieur gauche, il faut enlever du rayon, dans l'angle inférieur droit, il faut en rajouter
+            self.elements += [salle.create_oval(self.topX,           self.topY,           self.botX,           self.botY,           fill=color)]
+            self.elements += [salle.create_oval(self.topX+thickness, self.topY+thickness, self.botX-thickness, self.botY-thickness, fill='white')]
+            self.elements += [salle.create_rectangle(self.topX, self.topY, self.botX, self.botY)]
  
-        dude.firstPlan()
+            dude.firstPlan()
        
     def delete(self):
         #Efface tous les éléments contenus dans la liste
@@ -117,18 +118,27 @@ class Dude():
 #Portail Bleu
 def createBluePortal(event):
     global bluePortal
-    portalBisB = bluePortal
-    bluePortal = Portal(event, '#6699ff')
-    if(portalBisB != None):
-        portalBisB.delete()
+    #Créé un faux portail pour voir si il peut être posé
+    simulBluePortal = Portal(event, '#6699ff', False)
+    if(orangePortal != None and simulBluePortal.getHitbox().intersects(orangePortal.getHitbox())):
+       print('Collision entre le portail bleu et orange !')
+    else:
+        if(bluePortal != None):
+            bluePortal.delete()
+        bluePortal = Portal(event, '#6699ff', True)
+    
         
 #Portail Orange  
 def createOrangePortal(event):
     global orangePortal
-    portalBisO = orangePortal
-    orangePortal = Portal(event, '#ff6600')
-    if(portalBisO != None):
-        portalBisO.delete()
+    #Créé un faux portail pour voir si il peut être posé 
+    simulOrangePortal = Portal(event, '#ff6600', False)
+    if(bluePortal != None and simulOrangePortal.getHitbox().intersects(bluePortal.getHitbox())):
+       print('Collision entre le portail bleu et orange !')
+    else:
+        if(orangePortal != None):
+            orangePortal.delete()
+        orangePortal = Portal(event, '#ff6600', True)    
 
 def checkHitbox():
     global dude, bluePortal, orangePortal
