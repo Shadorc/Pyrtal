@@ -49,7 +49,7 @@ class Dude():
     def __init__(self, x, y):
         self.x = x
         self.y = y
-        self.photo = PhotoImage(file="PortalDude2.gif")
+        self.photo = PhotoImage(file="Dude.gif")
         self.image = salle.create_image(self.x, self.y, image=self.photo, anchor=NW)
         self.width = self.photo.width()
         self.height = self.photo.height()
