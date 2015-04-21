@@ -118,9 +118,19 @@ line = 0
 lastShoot = time.time()
 reloadingTime = 0.1
 
+class Gun():        
+    def __init__(self, x, y, photo):
+        self.elements = []
+        self.x = x
+        self.y = y
+        self.photo = photo
+        self.image = salle.create_image(self.x, self.y, image=photo, anchor=SW)
+        self.width = self.photo.width()
+        self.height = self.photo.height()
+        
 #Portail Bleu  
 def createBluePortal(event):
-    global lastShoot, bluePortal
+    global lastShoot, bluePortal, gun
     if(time.time() - lastShoot > reloadingTime):
         lastShoot = time.time()
 
@@ -155,6 +165,7 @@ def createBluePortal(event):
                 #Si le portail vient de la gauche, soustraire la différence pour le coller sur le bord gauche
                 else:
                     y -= simulBluePortal.height - abs(differenceY)
+        gun = Gun(500, 500, PhotoImage(file="PGunB.gif"))
             
         if(bluePortal != None):
             bluePortal.delete()
@@ -170,7 +181,7 @@ def createBluePortal(event):
 
 #Portail Orange  
 def createOrangePortal(event):
-    global lastShoot, orangePortal
+    global lastShoot, orangePortal, gun
     if(time.time() - lastShoot > reloadingTime):
         lastShoot = time.time()
 
@@ -205,6 +216,7 @@ def createOrangePortal(event):
                 #Si le portail vient de la gauche, soustraire la différence pour le coller sur le bord gauche
                 else:
                     y -= simulOrangePortal.height - abs(differenceY)
+        gun = Gun(500, 500, PhotoImage(file="PGunO.gif"))
             
         if(orangePortal != None):
             orangePortal.delete()
@@ -234,7 +246,7 @@ frame.title("Pyrtal")
 
 salle = Canvas(frame, width=frameW, height=frameH)
 dude = Dude(450, 700)
-
+gun = Gun(500, 500, PhotoImage(file="PGunI.gif"))
 bluePortal = None
 orangePortal = None
 
@@ -264,3 +276,8 @@ chaine.pack()
 salle.pack()
 
 frame.mainloop()
+
+
+
+
+
