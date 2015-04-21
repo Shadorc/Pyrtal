@@ -115,102 +115,108 @@ class Dude():
         return Rect(self.x, self.y, self.width, self.height)
 
 line = 0
+lastShoot = time.time()
+reloadingTime = 0.1
 
 #Portail Bleu  
 def createBluePortal(event):
-    global bluePortal
+    global lastShoot, bluePortal
+    if(time.time() - lastShoot > reloadingTime):
+        lastShoot = time.time()
 
-    x = event.x
-    y = event.y
+        x = event.x
+        y = event.y
 
-    if(orangePortal != None):
-        #Créé un faux portail pour voir si il peut être posé 
-        simulBluePortal = Portal([x, y], '#6699ff', False)
+        if(orangePortal != None):
+            #Créé un faux portail pour voir si il peut être posé 
+            simulBluePortal = Portal([x, y], '#6699ff', False)
 
-        #Distance entre le centreX des deux portails
-        differenceX = simulBluePortal.centerX - orangePortal.centerX
-        #Distance entre le centreY des deux portails
-        differenceY = simulBluePortal.centerY - orangePortal.centerY
+            #Distance entre le centreX des deux portails
+            differenceX = simulBluePortal.centerX - orangePortal.centerX
+            #Distance entre le centreY des deux portails
+            differenceY = simulBluePortal.centerY - orangePortal.centerY
 
-        print(differenceX,':',differenceY)
-        
-        if(abs(differenceX) < orangePortal.width and abs(differenceY) < orangePortal.height):
+            print(differenceX,':',differenceY)
             
-            #Si le portail vient de la droite, ajouter la différence pour le coller contre le bord droite
-            if(differenceX >= 0):
-                x += simulBluePortal.width - abs(differenceX)
-            #Si le portail vient de la gauche, soustraire la différence pour le coller sur le bord gauche
-            else:
-                x -= simulBluePortal.width - abs(differenceX)
+            if(abs(differenceX) < orangePortal.width and abs(differenceY) < orangePortal.height):
                 
-        elif(abs(differenceX) < orangePortal.width and abs(differenceY) < orangePortal.height and abs(differenceY) > abs(differenceX)):
+                #Si le portail vient de la droite, ajouter la différence pour le coller contre le bord droite
+                if(differenceX >= 0):
+                    x += simulBluePortal.width - abs(differenceX)
+                #Si le portail vient de la gauche, soustraire la différence pour le coller sur le bord gauche
+                else:
+                    x -= simulBluePortal.width - abs(differenceX)
+                    
+            elif(abs(differenceX) < orangePortal.width and abs(differenceY) < orangePortal.height and abs(differenceY) > abs(differenceX)):
+                
+                #Si le portail vient de la droite, ajouter la différence pour le coller contre le bord droite
+                if(differenceY >= 0):
+                    y += simulBluePortal.height - abs(differenceY)
+                #Si le portail vient de la gauche, soustraire la différence pour le coller sur le bord gauche
+                else:
+                    y -= simulBluePortal.height - abs(differenceY)
             
-            #Si le portail vient de la droite, ajouter la différence pour le coller contre le bord droite
-            if(differenceY >= 0):
-                y += simulBluePortal.height - abs(differenceY)
-            #Si le portail vient de la gauche, soustraire la différence pour le coller sur le bord gauche
-            else:
-                y -= simulBluePortal.height - abs(differenceY)
-        
-    if(bluePortal != None):
-        bluePortal.delete()
-        
-    bluePortal = Portal([x, y], '#6699ff', True)
+        if(bluePortal != None):
+            bluePortal.delete()
+            
+        bluePortal = Portal([x, y], '#6699ff', True)
 
-    if(orangePortal != None):
-        global line
-        salle.delete(line)
-        line = salle.create_line(x, y, orangePortal.centerX, orangePortal.centerY)
+        if(orangePortal != None):
+            global line
+            salle.delete(line)
+            line = salle.create_line(x, y, orangePortal.centerX, orangePortal.centerY)
 
-    checkHitbox()
+        checkHitbox()
 
 #Portail Orange  
 def createOrangePortal(event):
-    global orangePortal
+    global lastShoot, orangePortal
+    if(time.time() - lastShoot > reloadingTime):
+        lastShoot = time.time()
 
-    x = event.x
-    y = event.y
+        x = event.x
+        y = event.y
 
-    if(bluePortal != None):
-        #Créé un faux portail pour voir si il peut être posé 
-        simulOrangePortal = Portal([x, y], '#ff6600', False)
+        if(bluePortal != None):
+            #Créé un faux portail pour voir si il peut être posé 
+            simulOrangePortal = Portal([x, y], '#ff6600', False)
 
-        #Distance entre le centreX des deux portails
-        differenceX = simulOrangePortal.centerX - bluePortal.centerX
-        #Distance entre le centreY des deux portails
-        differenceY = simulOrangePortal.centerY - bluePortal.centerY
+            #Distance entre le centreX des deux portails
+            differenceX = simulOrangePortal.centerX - bluePortal.centerX
+            #Distance entre le centreY des deux portails
+            differenceY = simulOrangePortal.centerY - bluePortal.centerY
 
-        print(differenceX,':',differenceY)
-        
-        if(abs(differenceX) < bluePortal.width and abs(differenceY) < bluePortal.height):
+            print(differenceX,':',differenceY)
             
-            #Si le portail vient de la droite, ajouter la différence pour le coller contre le bord droite
-            if(differenceX >= 0):
-                x += simulOrangePortal.width - abs(differenceX)
-            #Si le portail vient de la gauche, soustraire la différence pour le coller sur le bord gauche
-            else:
-                x -= simulOrangePortal.width - abs(differenceX)
+            if(abs(differenceX) < bluePortal.width and abs(differenceY) < bluePortal.height):
                 
-        elif(abs(differenceX) < bluePortal.width and abs(differenceY) < bluePortal.height and abs(differenceY) > abs(differenceX)):
+                #Si le portail vient de la droite, ajouter la différence pour le coller contre le bord droite
+                if(differenceX >= 0):
+                    x += simulOrangePortal.width - abs(differenceX)
+                #Si le portail vient de la gauche, soustraire la différence pour le coller sur le bord gauche
+                else:
+                    x -= simulOrangePortal.width - abs(differenceX)
+                    
+            elif(abs(differenceX) < bluePortal.width and abs(differenceY) < bluePortal.height and abs(differenceY) > abs(differenceX)):
+                
+                #Si le portail vient de la droite, ajouter la différence pour le coller contre le bord droite
+                if(differenceY >= 0):
+                    y += simulOrangePortal.height - abs(differenceY)
+                #Si le portail vient de la gauche, soustraire la différence pour le coller sur le bord gauche
+                else:
+                    y -= simulOrangePortal.height - abs(differenceY)
             
-            #Si le portail vient de la droite, ajouter la différence pour le coller contre le bord droite
-            if(differenceY >= 0):
-                y += simulOrangePortal.height - abs(differenceY)
-            #Si le portail vient de la gauche, soustraire la différence pour le coller sur le bord gauche
-            else:
-                y -= simulOrangePortal.height - abs(differenceY)
-        
-    if(orangePortal != None):
-        orangePortal.delete()
-        
-    orangePortal = Portal([x, y], '#ff6600', True)
+        if(orangePortal != None):
+            orangePortal.delete()
+            
+        orangePortal = Portal([x, y], '#ff6600', True)
 
-    if(bluePortal != None):
-        global line
-        salle.delete(line)
-        line = salle.create_line(x, y, bluePortal.centerX, bluePortal.centerY)
+        if(bluePortal != None):
+            global line
+            salle.delete(line)
+            line = salle.create_line(x, y, bluePortal.centerX, bluePortal.centerY)
 
-    checkHitbox()
+        checkHitbox()
 
 def checkHitbox():
     global dude, bluePortal, orangePortal
