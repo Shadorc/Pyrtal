@@ -3,6 +3,12 @@ from math import *
 import time
 from rectangle import Rect
 
+"""
+#--------------------------------------------------------------------------------------#
+#---------------------------------CLASSE PORTAL----------------------------------------#
+#--------------------------------------------------------------------------------------#
+"""
+
 class Portal():
     def __init__(self, positions, color, visible):
         self.centerX = positions[0]
@@ -45,6 +51,11 @@ class Portal():
 
     def getHitbox(self):
         return Rect(self.topX, self.topY, self.width, self.height)
+"""
+#--------------------------------------------------------------------------------------#
+#----------------------------------CLASSE DUDE-----------------------------------------#
+#--------------------------------------------------------------------------------------#
+"""
 
 class Dude():
     def __init__(self, x, y):
@@ -60,7 +71,6 @@ class Dude():
 
     #Mouvements
     def move(self, event):
-
         #Haut
         if (event.char == 'z') and (800 <= self.y+self.height):
             self.y -= self.speed
@@ -117,6 +127,61 @@ class Dude():
     def getHitbox(self):
         return Rect(self.x, self.y, self.width, self.height)
 
+"""
+#--------------------------------------------------------------------------------------#
+#----------------------------------CLASSE CUBE-----------------------------------------#
+#--------------------------------------------------------------------------------------#
+"""      
+
+class Cube():
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+        self.photo = PhotoImage(file="Cube.gif")
+        self.width = self.photo.width()
+        self.height = self.photo.height()
+        self.image = salle.create_image(self.x, self.y, image = self.photo, anchor=NW)
+
+    def goDown(self):
+        while(self.y+self.height <= 800):
+            self.y += 5
+            salle.coords(self.image, self.x, self.y)
+            salle.update()
+            time.sleep(0.01)
+        checkHitbox()
+
+    def firstPlan(self):
+        salle.delete(self.image)
+        self.image = salle.create_image(self.x, self.y, image=self.photo, anchor=NW)
+        salle.update()
+
+    def teleport(self, x, y):
+        self.x = x
+        self.y = y
+        salle.coords(self.image, self.x, self.y)
+        self.firstPlan()
+        self.goDown()
+
+    def getHitbox(self):
+        return Rect(self.x, self.y, self.width, self.height)
+
+    def getHitboxL(self):
+        return Rect(self.x, self.y, self.width/4, self.height)
+
+    def getHitboxR(self):
+        return Rect(self.x+(self.width-self.width/4), self.y, self.width/4, self.height)
+
+    def move(self, x, y):
+        self.x = x
+        self.y = y
+        salle.coords(self.image, self.x, self.y)
+
+"""
+#--------------------------------------------------------------------------------------#
+#----------------------------------CLASSE GUN------------------------------------------#
+#--------------------------------------------------------------------------------------#
+"""
+
 line = 0
 #Heure en seconde
 lastShoot = time.time()
@@ -135,6 +200,12 @@ class Gun():
     def rotate(self, event):
         salle.delete(self.element)
         self.element = salle.create_line(dude.x+dude.width/2, dude.y+dude.height/3, event.x, event.y)
+
+"""
+#--------------------------------------------------------------------------------------#
+#----------------------------------------MAIN------------------------------------------#
+#--------------------------------------------------------------------------------------#
+"""   
        
 #Portail Bleu  
 def createBluePortal(event):
@@ -252,53 +323,6 @@ def checkHitbox():
         cube.move(cube.x+dude.speed, cube.y)
     if(cube.getHitboxR().intersects(dude.getHitbox())):
         cube.move(cube.x-dude.speed, cube.y)
-        
-
-class Cube():
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
-        self.photo = PhotoImage(file="Cube.gif")
-        self.width = self.photo.width()
-        self.height = self.photo.height()
-        self.image = salle.create_image(self.x, self.y, image = self.photo, anchor=NW)
-        self.debug = 0
-
-    def goDown(self):
-        
-        while(self.y+self.height <= 800):
-            self.y += 5
-            salle.coords(self.image, self.x, self.y)
-            salle.update()
-            time.sleep(0.01)
-        checkHitbox()
-
-    def firstPlan(self):
-        salle.delete(self.image)
-        self.image = salle.create_image(self.x, self.y, image=self.photo, anchor=NW)
-        salle.update()
-
-    def teleport(self, x, y):
-
-        self.x = x
-        self.y = y
-        salle.coords(self.image, self.x, self.y)
-        self.firstPlan()
-        self.goDown()
-
-    def getHitbox(self):
-        return Rect(self.x, self.y, self.width, self.height)
-
-    def getHitboxL(self):
-        return Rect(self.x, self.y, self.width/4, self.height)
-
-    def getHitboxR(self):
-        return Rect(self.x+(self.width-self.width/4), self.y, self.width/4, self.height)
-
-    def move(self, x, y):
-        self.x = x
-        self.y = y
-        salle.coords(self.image, self.x, self.y)
     
 frameW = 1000
 frameH = 900
@@ -307,10 +331,10 @@ frame = Tk()
 frame.title("Pyrtal")
 
 salle = Canvas(frame, width=frameW, height=frameH)
+
 dude = Dude(450, 700)
 gun = Gun(500, 500, PhotoImage(file="PGunI.gif"))
 cube= Cube(300, 800)
-
 
 bluePortal = None
 orangePortal = None
