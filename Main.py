@@ -9,7 +9,6 @@ class Portal():
         self.centerY = positions[1]
         self.elements = []
         
-        global salle, dude
         #Sol & Plafond : Portail horizontal
         if(self.centerY < 125 or self.centerY > 788):
             self.width = 300
@@ -33,6 +32,8 @@ class Portal():
             #Dans l'angle supérieur gauche, il faut enlever du rayon, dans l'angle inférieur droit, il faut en rajouter
             self.elements += [salle.create_oval(self.topX,           self.topY,           self.botX,           self.botY,           fill=color)]
             self.elements += [salle.create_oval(self.topX+thickness, self.topY+thickness, self.botX-thickness, self.botY-thickness, fill='white')]
+
+            #Hitbox Portail
             self.elements += [salle.create_rectangle(self.topX, self.topY, self.botX, self.botY)]
  
             dude.firstPlan()
@@ -49,29 +50,29 @@ class Dude():
     def __init__(self, x, y):
         self.x = x
         self.y = y
-        self.photo = PhotoImage(file="Dude.gif")
+        self.photo = PhotoImage(file="Dude_sans_bras.gif")
         self.image = salle.create_image(self.x, self.y, image=self.photo, anchor=NW)
         self.width = self.photo.width()
         self.height = self.photo.height()
         self.isGoingDown = False
         self.debug = 0
+        self.speed = 20
 
     #Mouvements
     def move(self, event):
-        speed = 20
 
         #Haut
         if (event.char == 'z') and (800 <= self.y+self.height):
-            self.y -= speed
+            self.y -= self.speed
         #Bas
         elif (event.char == 's') and (self.y+self.height <= 890):
-            self.y += speed
+            self.y += self.speed
         #Gauche
         elif (event.char == 'q') and (140 <= self.x):
-            self.x -= speed
+            self.x -= self.speed
         #Droite
         elif (event.char == 'd') and (self.x+self.width <= 855):
-            self.x += speed
+            self.x += self.speed
         #The Game Easter Egg
         elif (event.char == ' '):
             text = salle.create_text(self.x+100, self.y, text="The Game")
@@ -82,8 +83,10 @@ class Dude():
                 salle.coords(text, self.x+100, self.y)
                 salle.update()
 
+        #Hitbox Dude
         salle.delete(self.debug)
         self.debug = salle.create_rectangle(self.x, self.y, self.x+self.width, self.y+self.height)
+
         salle.coords(self.image, self.x, self.y)
         checkHitbox()
 
@@ -115,19 +118,24 @@ class Dude():
         return Rect(self.x, self.y, self.width, self.height)
 
 line = 0
+#Heure en seconde
 lastShoot = time.time()
 reloadingTime = 0.1
 
 class Gun():        
     def __init__(self, x, y, photo):
-        self.elements = []
+        self.element = 0
         self.x = x
         self.y = y
         self.photo = photo
         self.image = salle.create_image(self.x, self.y, image=photo, anchor=SW)
         self.width = self.photo.width()
         self.height = self.photo.height()
-        
+
+    def rotate(self, event):
+        salle.delete(self.element)
+        self.element = salle.create_line(dude.x+dude.width/2, dude.y+dude.height/3, event.x, event.y)
+       
 #Portail Bleu  
 def createBluePortal(event):
     global lastShoot, bluePortal, gun
@@ -145,8 +153,6 @@ def createBluePortal(event):
             differenceX = simulBluePortal.centerX - orangePortal.centerX
             #Distance entre le centreY des deux portails
             differenceY = simulBluePortal.centerY - orangePortal.centerY
-
-            print(differenceX,':',differenceY)
             
             if(abs(differenceX) < orangePortal.width and abs(differenceY) < orangePortal.height):
                 
@@ -165,6 +171,7 @@ def createBluePortal(event):
                 #Si le portail vient de la gauche, soustraire la différence pour le coller sur le bord gauche
                 else:
                     y -= simulBluePortal.height - abs(differenceY)
+        salle.delete(gun)
         gun = Gun(500, 500, PhotoImage(file="PGunB.gif"))
             
         if(bluePortal != None):
@@ -196,8 +203,6 @@ def createOrangePortal(event):
             differenceX = simulOrangePortal.centerX - bluePortal.centerX
             #Distance entre le centreY des deux portails
             differenceY = simulOrangePortal.centerY - bluePortal.centerY
-
-            print(differenceX,':',differenceY)
             
             if(abs(differenceX) < bluePortal.width and abs(differenceY) < bluePortal.height):
                 
@@ -216,6 +221,7 @@ def createOrangePortal(event):
                 #Si le portail vient de la gauche, soustraire la différence pour le coller sur le bord gauche
                 else:
                     y -= simulOrangePortal.height - abs(differenceY)
+        salle.delete(gun)
         gun = Gun(500, 500, PhotoImage(file="PGunO.gif"))
             
         if(orangePortal != None):
@@ -237,6 +243,62 @@ def checkHitbox():
             dude.teleport(orangePortal.centerX, orangePortal.centerY)
         elif(orangePortal.getHitbox().intersects(dude.getHitbox())):
             dude.teleport(bluePortal.centerX, bluePortal.centerY)
+        if(bluePortal.getHitbox().intersects(cube.getHitbox())):
+            cube.teleport(orangePortal.centerX, orangePortal.centerY)
+        elif(orangePortal.getHitbox().intersects(cube.getHitbox())):
+            cube.teleport(bluePortal.centerX, bluePortal.centerY)
+            
+    if(cube.getHitboxL().intersects(dude.getHitbox())):
+        cube.move(cube.x+dude.speed, cube.y)
+    if(cube.getHitboxR().intersects(dude.getHitbox())):
+        cube.move(cube.x-dude.speed, cube.y)
+        
+
+class Cube():
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+        self.photo = PhotoImage(file="Cube.gif")
+        self.width = self.photo.width()
+        self.height = self.photo.height()
+        self.image = salle.create_image(self.x, self.y, image = self.photo, anchor=NW)
+        self.debug = 0
+
+    def goDown(self):
+        
+        while(self.y+self.height <= 800):
+            self.y += 5
+            salle.coords(self.image, self.x, self.y)
+            salle.update()
+            time.sleep(0.01)
+        checkHitbox()
+
+    def firstPlan(self):
+        salle.delete(self.image)
+        self.image = salle.create_image(self.x, self.y, image=self.photo, anchor=NW)
+        salle.update()
+
+    def teleport(self, x, y):
+
+        self.x = x
+        self.y = y
+        salle.coords(self.image, self.x, self.y)
+        self.firstPlan()
+        self.goDown()
+
+    def getHitbox(self):
+        return Rect(self.x, self.y, self.width, self.height)
+
+    def getHitboxL(self):
+        return Rect(self.x, self.y, self.width/4, self.height)
+
+    def getHitboxR(self):
+        return Rect(self.x+(self.width-self.width/4), self.y, self.width/4, self.height)
+
+    def move(self, x, y):
+        self.x = x
+        self.y = y
+        salle.coords(self.image, self.x, self.y)
     
 frameW = 1000
 frameH = 900
@@ -247,6 +309,9 @@ frame.title("Pyrtal")
 salle = Canvas(frame, width=frameW, height=frameH)
 dude = Dude(450, 700)
 gun = Gun(500, 500, PhotoImage(file="PGunI.gif"))
+cube= Cube(300, 800)
+
+
 bluePortal = None
 orangePortal = None
 
@@ -270,14 +335,10 @@ salle.focus_set()
 salle.bind("<Button-1>", createBluePortal)
 salle.bind("<Button-3>", createOrangePortal)
 salle.bind("<KeyPress>", dude.move)
+salle.bind("<Motion>", gun.rotate)
 
 chaine = Label(frame)
 chaine.pack()
 salle.pack()
 
 frame.mainloop()
-
-
-
-
-
