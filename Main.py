@@ -188,12 +188,12 @@ lastShoot = time.time()
 reloadingTime = 0.1
 
 class Gun():        
-    def __init__(self, x, y, photo):
+    def __init__(self, x, y, name):
         self.element = 0
         self.x = x
         self.y = y
-        self.photo = photo
-        self.image = salle.create_image(self.x, self.y, image=photo, anchor=SW)
+        self.photo = PhotoImage(file=name)
+        self.image = salle.create_image(self.x, self.y, image=self.photo, anchor=SW)
         self.width = self.photo.width()
         self.height = self.photo.height()
 
@@ -205,7 +205,7 @@ class Gun():
 #--------------------------------------------------------------------------------------#
 #----------------------------------------MAIN------------------------------------------#
 #--------------------------------------------------------------------------------------#
-"""   
+"""
        
 #Portail Bleu  
 def createBluePortal(event):
@@ -243,7 +243,7 @@ def createBluePortal(event):
                 else:
                     y -= simulBluePortal.height - abs(differenceY)
         salle.delete(gun)
-        gun = Gun(500, 500, PhotoImage(file="PGunB.gif"))
+        gun = Gun(500, 500, "PGunB.gif")
             
         if(bluePortal != None):
             bluePortal.delete()
@@ -293,7 +293,7 @@ def createOrangePortal(event):
                 else:
                     y -= simulOrangePortal.height - abs(differenceY)
         salle.delete(gun)
-        gun = Gun(500, 500, PhotoImage(file="PGunO.gif"))
+        gun = Gun(500, 500, "PGunO.gif")
             
         if(orangePortal != None):
             orangePortal.delete()
@@ -333,7 +333,7 @@ frame.title("Pyrtal")
 salle = Canvas(frame, width=frameW, height=frameH)
 
 dude = Dude(450, 700)
-gun = Gun(500, 500, PhotoImage(file="PGunI.gif"))
+gun = Gun(500, 500, "PGunI.gif")
 cube= Cube(300, 800)
 
 bluePortal = None
