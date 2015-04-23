@@ -1,7 +1,8 @@
 from tkinter import *
 from math import *
+from rectangle import *
 import time
-from rectangle import Rect
+import threading
 
 """
 #--------------------------------------------------------------------------------------#
@@ -140,13 +141,16 @@ class Cube():
         self.width = self.photo.width()
         self.height = self.photo.height()
         self.image = salle.create_image(self.x, self.y, image = self.photo, anchor=NW)
+        self.isFalling = False
 
     def goDown(self):
+        self.isFalling = True
         while(self.y+self.height <= 800):
             self.y += 5
             salle.coords(self.image, self.x, self.y)
             salle.update()
             time.sleep(0.01)
+        self.isFalling = False
         checkHitbox()
 
     def firstPlan(self):
@@ -159,7 +163,8 @@ class Cube():
         self.y = y
         salle.coords(self.image, self.x, self.y)
         self.firstPlan()
-        self.goDown()
+        t = threading.Thread(target=self.goDown)
+        t.start()
 
     def getHitbox(self):
         return Rect(self.x, self.y, self.width, self.height)
