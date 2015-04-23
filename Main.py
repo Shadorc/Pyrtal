@@ -66,7 +66,7 @@ class Dude():
         self.image = salle.create_image(self.x, self.y, image=self.photo, anchor=NW)
         self.width = self.photo.width()
         self.height = self.photo.height()
-        self.isGoingDown = False
+        self.isFalling = False
         self.debug = 0
         self.speed = 20
 
@@ -102,15 +102,14 @@ class Dude():
         checkHitbox()
 
     def goDown(self):
-        if(dude.isGoingDown == False):
-            dude.isGoingDown = True
-            while(self.y+self.height <= 800):
-                self.y += 5
-                salle.coords(self.image, self.x, self.y)
-                salle.update()
-                time.sleep(0.01)
-            dude.isGoingDown = False
-            checkHitbox()
+        dude.isFalling = True
+        while(self.y+self.height <= 800):
+            self.y += 5
+            salle.coords(self.image, self.x, self.y)
+            salle.update()
+            time.sleep(0.01)
+        dude.isFalling = False
+        checkHitbox()
 
     def firstPlan(self):
         salle.delete(self.image)
@@ -118,12 +117,11 @@ class Dude():
         salle.update()
 
     def teleport(self, x, y):
-        if(dude.isGoingDown == False):
-            self.x = x
-            self.y = y
-            salle.coords(self.image, self.x, self.y)
-            self.firstPlan()
-            self.goDown()
+        self.x = x
+        self.y = y
+        salle.coords(self.image, self.x, self.y)
+        self.firstPlan()
+        self.goDown()
 
     def getHitbox(self):
         return Rect(self.x, self.y, self.width, self.height)
