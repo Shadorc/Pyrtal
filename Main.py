@@ -171,6 +171,12 @@ class Cube():
     def getHitboxR(self):
         return Rect(self.x+(self.width-self.width/4), self.y, self.width/4, self.height)
 
+    def getHitboxU(self):
+        return Rect(self.x, self.y, self.width, self.height-self.height/3)
+    
+    def getHitboxD(self):
+        return Rect(self.x+self.height/2, self.y-self.width/2, self.width/4, self.height)
+    
     def move(self, x, y):
         self.x = x
         self.y = y
@@ -323,6 +329,10 @@ def checkHitbox():
         cube.move(cube.x+dude.speed, cube.y)
     if(cube.getHitboxR().intersects(dude.getHitbox())):
         cube.move(cube.x-dude.speed, cube.y)
+    if(cube.getHitboxU().intersects(dude.getHitbox())):
+        cube.move(cube.x, cube.y-dude.speed )
+    if(cube.getHitboxD().intersects(dude.getHitbox())):
+        cube.move(cube.x, cube.y+dude.speed)
     
 frameW = 1000
 frameH = 900
