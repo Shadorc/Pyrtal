@@ -33,8 +33,8 @@ class Portal():
         
         #Epaisseur du portail
         thickness = 5
-
-        if(visible):
+        
+        if(visible == True):
             #Dans l'angle supérieur gauche, il faut enlever du rayon, dans l'angle inférieur droit, il faut en rajouter
             self.elements += [salle.create_oval(self.topX,           self.topY,           self.botX,           self.botY,           fill=color)]
             self.elements += [salle.create_oval(self.topX+thickness, self.topY+thickness, self.botX-thickness, self.botY-thickness, fill='white')]
@@ -51,6 +51,7 @@ class Portal():
 
     def getHitbox(self):
         return Rect(self.topX, self.topY, self.width, self.height)
+
 """
 #--------------------------------------------------------------------------------------#
 #----------------------------------CLASSE DUDE-----------------------------------------#
@@ -188,11 +189,6 @@ class Cube():
 #--------------------------------------------------------------------------------------#
 """
 
-line = 0
-#Heure en seconde
-lastShoot = time.time()
-reloadingTime = 0.1
-
 class Gun():        
     def __init__(self, x, y, name):
         self.element = 0
@@ -212,104 +208,68 @@ class Gun():
 #----------------------------------------MAIN------------------------------------------#
 #--------------------------------------------------------------------------------------#
 """
-       
-#Portail Bleu  
-def createBluePortal(event):
-    global lastShoot, bluePortal, gun
+
+#Heure et temps de recharge en seconde
+lastShoot = time.time()
+reloadingTime = 0.1
+
+#Créer un Portail
+def createPortal(event, color):
+    global lastShoot, bluePortal, orangePortal, gun
+
     if(time.time() - lastShoot > reloadingTime):
         lastShoot = time.time()
 
         x = event.x
         y = event.y
 
-        if(orangePortal != None):
-            #Créé un faux portail pour voir si il peut être posé 
-            simulBluePortal = Portal([x, y], '#6699ff', False)
+        if(color == 'blue'):
+            portal = bluePortal
+            otherPortal = orangePortal
+        elif(color == 'orange'):
+            portal = orangePortal
+            otherPortal = bluePortal
+
+        #Vérifie si le portail qui va être créé n'est pas posé par dessus le deuxième
+        if(otherPortal != None):
+            #Créé un faux portail pour voir s'il peut être posé 
+            simulPortal = Portal([x, y], color, False)
 
             #Distance entre le centreX des deux portails
-            differenceX = simulBluePortal.centerX - orangePortal.centerX
+            differenceX = simulPortal.centerX - otherPortal.centerX
             #Distance entre le centreY des deux portails
-            differenceY = simulBluePortal.centerY - orangePortal.centerY
+            differenceY = simulPortal.centerY - otherPortal.centerY
             
-            if(abs(differenceX) < orangePortal.width and abs(differenceY) < orangePortal.height):
+            if(abs(differenceX) < otherPortal.width and abs(differenceY) < otherPortal.height):
                 
                 #Si le portail vient de la droite, ajouter la différence pour le coller contre le bord droite
                 if(differenceX >= 0):
-                    x += simulBluePortal.width - abs(differenceX)
+                    x += simulPortal.width - abs(differenceX)
                 #Si le portail vient de la gauche, soustraire la différence pour le coller sur le bord gauche
                 else:
-                    x -= simulBluePortal.width - abs(differenceX)
+                    x -= simulPortal.width - abs(differenceX)
                     
-            elif(abs(differenceX) < orangePortal.width and abs(differenceY) < orangePortal.height and abs(differenceY) > abs(differenceX)):
+            elif(abs(differenceX) < otherPortal.width and abs(differenceY) < otherPortal.height and abs(differenceY) > abs(differenceX)):
                 
                 #Si le portail vient de la droite, ajouter la différence pour le coller contre le bord droite
                 if(differenceY >= 0):
-                    y += simulBluePortal.height - abs(differenceY)
+                    y += simulPortal.height - abs(differenceY)
                 #Si le portail vient de la gauche, soustraire la différence pour le coller sur le bord gauche
                 else:
-                    y -= simulBluePortal.height - abs(differenceY)
-        salle.delete(gun)
-        gun = Gun(500, 500, "PGunB.gif")
-            
-        if(bluePortal != None):
-            bluePortal.delete()
-            
-        bluePortal = Portal([x, y], '#6699ff', True)
+                    y -= simulPortal.height - abs(differenceY)
 
-        if(orangePortal != None):
-            global line
-            salle.delete(line)
-            line = salle.create_line(x, y, orangePortal.centerX, orangePortal.centerY)
+        if(color == 'blue'):
+            #Si le portail avait déjà été posé, l'effacer
+            if(bluePortal != None):
+                bluePortal.delete()
+            bluePortal = Portal([x, y], '#6699ff', True)
+            gun = Gun(500, 500, "PGunB.gif")
 
-        checkHitbox()
-
-#Portail Orange  
-def createOrangePortal(event):
-    global lastShoot, orangePortal, gun
-    if(time.time() - lastShoot > reloadingTime):
-        lastShoot = time.time()
-
-        x = event.x
-        y = event.y
-
-        if(bluePortal != None):
-            #Créé un faux portail pour voir si il peut être posé 
-            simulOrangePortal = Portal([x, y], '#ff6600', False)
-
-            #Distance entre le centreX des deux portails
-            differenceX = simulOrangePortal.centerX - bluePortal.centerX
-            #Distance entre le centreY des deux portails
-            differenceY = simulOrangePortal.centerY - bluePortal.centerY
-            
-            if(abs(differenceX) < bluePortal.width and abs(differenceY) < bluePortal.height):
-                
-                #Si le portail vient de la droite, ajouter la différence pour le coller contre le bord droite
-                if(differenceX >= 0):
-                    x += simulOrangePortal.width - abs(differenceX)
-                #Si le portail vient de la gauche, soustraire la différence pour le coller sur le bord gauche
-                else:
-                    x -= simulOrangePortal.width - abs(differenceX)
-                    
-            elif(abs(differenceX) < bluePortal.width and abs(differenceY) < bluePortal.height and abs(differenceY) > abs(differenceX)):
-                
-                #Si le portail vient de la droite, ajouter la différence pour le coller contre le bord droite
-                if(differenceY >= 0):
-                    y += simulOrangePortal.height - abs(differenceY)
-                #Si le portail vient de la gauche, soustraire la différence pour le coller sur le bord gauche
-                else:
-                    y -= simulOrangePortal.height - abs(differenceY)
-        salle.delete(gun)
-        gun = Gun(500, 500, "PGunO.gif")
-            
-        if(orangePortal != None):
-            orangePortal.delete()
-            
-        orangePortal = Portal([x, y], '#ff6600', True)
-
-        if(bluePortal != None):
-            global line
-            salle.delete(line)
-            line = salle.create_line(x, y, bluePortal.centerX, bluePortal.centerY)
+        elif(color == 'orange'):
+            if(orangePortal != None):
+                orangePortal.delete() 
+            orangePortal = Portal([x, y], '#ff6600', True)
+            gun = Gun(500, 500, "PGunO.gif")
 
         checkHitbox()
 
@@ -366,8 +326,8 @@ salle.create_line(0, 0, 125, 112)
 salle.focus_set()
 
 #Configure les touches souris / clavier
-salle.bind("<Button-1>", createBluePortal)
-salle.bind("<Button-3>", createOrangePortal)
+salle.bind("<Button-1>", lambda event: createPortal(event, 'blue'))
+salle.bind("<Button-3>", lambda event: createPortal(event, 'orange'))
 salle.bind("<KeyPress>", dude.move)
 salle.bind("<Motion>", gun.rotate)
 
