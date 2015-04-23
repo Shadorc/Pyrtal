@@ -279,16 +279,27 @@ def createPortal(event, color):
 
 def checkHitbox():
     global dude, bluePortal, orangePortal
+    
+    #Si les deux portails sont posés
     if(bluePortal != None and orangePortal != None):
-        if(bluePortal.getHitbox().intersects(dude.getHitbox())):
-            dude.teleport(orangePortal.centerX, orangePortal.centerY)
-        elif(orangePortal.getHitbox().intersects(dude.getHitbox())):
-            dude.teleport(bluePortal.centerX, bluePortal.centerY)
-        if(bluePortal.getHitbox().intersects(cube.getHitbox())):
-            cube.teleport(orangePortal.centerX, orangePortal.centerY)
-        elif(orangePortal.getHitbox().intersects(cube.getHitbox())):
-            cube.teleport(bluePortal.centerX, bluePortal.centerY)
-            
+
+        if(dude.isFalling == False):
+            #Si le dude passe par le portail bleu
+            if(bluePortal.getHitbox().intersects(dude.getHitbox())):
+                dude.teleport(orangePortal.centerX, orangePortal.centerY)
+            #Si le dude passe par le portail orange
+            elif(orangePortal.getHitbox().intersects(dude.getHitbox())):
+                dude.teleport(bluePortal.centerX, bluePortal.centerY)
+
+        if(cube.isFalling == False):
+            #Si le cube passe par le portail bleu
+            if(bluePortal.getHitbox().intersects(cube.getHitbox())):
+                cube.teleport(orangePortal.centerX, orangePortal.centerY)
+            #Si le cube passe par le portail orange
+            elif(orangePortal.getHitbox().intersects(cube.getHitbox())):
+                cube.teleport(bluePortal.centerX, bluePortal.centerY)
+
+    #Collisions entre le cube et le dude
     if(cube.getHitboxL().intersects(dude.getHitbox())):
         cube.move(cube.x+dude.speed, cube.y)
     if(cube.getHitboxR().intersects(dude.getHitbox())):
