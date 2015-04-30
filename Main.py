@@ -104,8 +104,10 @@ class Dude():
 
     def goDown(self):
         dude.isFalling = True
+        start = time.time()
         while(self.y+self.height <= 800):
-            self.y += 5
+            #y(t)=1/2gt²
+            self.y += 1/2  * 9.81 * (time.time() - start)**2
             salle.coords(self.image, self.x, self.y)
             salle.update()
             time.sleep(0.01)
@@ -145,8 +147,10 @@ class Cube():
 
     def goDown(self):
         self.isFalling = True
+        start = time.time()
         while(self.y+self.height <= 800):
-            self.y += 5
+            #y(t)=1/2gt²
+            self.y += 1/2 * 9.81 * (time.time() - start)**2
             salle.coords(self.image, self.x, self.y)
             salle.update()
             time.sleep(0.01)
