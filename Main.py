@@ -25,8 +25,8 @@ class Portal():
             self.height = 300
 
         #Coordonnées de l'angle en haut à gauche
-        self.topX = self.centerX-self.width/2
-        self.topY = self.centerY-self.height/2
+        self.x = self.centerX-self.width/2
+        self.y = self.centerY-self.height/2
 
         #Coordonnées de l'angle en bas à droite
         self.botX = self.centerX+self.width/2
@@ -37,11 +37,11 @@ class Portal():
         
         if(visible == True):
             #Dans l'angle supérieur gauche, il faut enlever du rayon, dans l'angle inférieur droit, il faut en rajouter
-            self.elements += [salle.create_oval(self.topX,           self.topY,           self.botX,           self.botY,           fill=color)]
-            self.elements += [salle.create_oval(self.topX+thickness, self.topY+thickness, self.botX-thickness, self.botY-thickness, fill='white')]
+            self.elements += [salle.create_oval(self.x,           self.y,           self.botX,           self.botY,           fill=color)]
+            self.elements += [salle.create_oval(self.x+thickness, self.y+thickness, self.botX-thickness, self.botY-thickness, fill='white')]
 
             #Hitbox Portail
-            self.elements += [salle.create_rectangle(self.topX, self.topY, self.botX, self.botY)]
+            self.elements += [salle.create_rectangle(self.x, self.y, self.botX, self.botY)]
  
             dude.firstPlan()
        
