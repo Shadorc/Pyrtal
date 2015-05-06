@@ -125,16 +125,16 @@ class Cube():
         salle.coords(self.image, self.x, self.y)
 
     def getHitboxL(self):
-        return Rect(self.x, self.y, self.width/4, self.height)
+        return Rect(self.x, self.y, 1, self.height)
 
     def getHitboxR(self):
-        return Rect(self.x+(self.width-self.width/4), self.y, self.width/4, self.height)
+        return Rect(self.x+(self.width-1), self.y, 1, self.height)
 
     def getHitboxU(self):
-        return Rect(self.x, self.y, self.width, self.height-self.height/3)
+        return Rect(self.x, self.y, self.width, 1)
     
     def getHitboxD(self):
-        return Rect(self.x+self.height/2, self.y-self.width/2, self.width/4, self.height)    
+        return Rect(self.x, self.y+(self.height-1), self.width, 1)    
 
 """
 #--------------------------------------------------------------------------------------#
