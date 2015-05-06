@@ -44,6 +44,7 @@ class Portal():
             self.elements += [salle.create_rectangle(self.x, self.y, self.botX, self.botY)]
  
             firstPlan(dude)
+            firstPlan(cube)
        
     def delete(self):
         #Efface tous les éléments contenus dans la liste
@@ -258,32 +259,12 @@ def goDown(entity):
         entity.speed = 20
 
 def checkHitbox():
-    global dude, bluePortal, orangePortal
+    global dude, cube, bluePortal, orangePortal
     
     #Si les deux portails sont posés
     if(bluePortal != None and orangePortal != None):
-        #Si le dude a atteint le sol alors on check les portails
-        if(dude.y+dude.height > 800):
-            #Si le dude passe par le portail bleu
-            if(getHitbox(bluePortal).intersects(getHitbox(dude))):
-                teleport(dude, orangePortal.centerX, orangePortal.centerY)
-            #Si le dude passe par le portail orange
-            elif(getHitbox(orangePortal).intersects(getHitbox(dude))):
-                teleport(dude, bluePortal.centerX, bluePortal.centerY)
-            else:
-                #Le dude n'est pas téléporté et a atteint le sol, on arrête de le faire tomber
-                dude.stop = True
-
-        if(cube.y+cube.height > 800):
-            #Si le cube passe par le portail bleu
-            if(getHitbox(bluePortal).intersects(getHitbox(cube))):
-                teleport(cube, orangePortal.centerX, orangePortal.centerY)
-            #Si le cube passe par le portail orange
-            elif(getHitbox(orangePortal).intersects(getHitbox(cube))):
-                teleport(cube, bluePortal.centerX, bluePortal.centerY)
-            else:
-                #Le cube n'est pas téléporté et a atteint le sol, on arrête de le faire tomber
-                cube.stop = True
+        checkPortalCollision(dude)
+        checkPortalCollision(cube)
 
     #Collisions entre le cube et le dude
     if(cube.getHitboxL().intersects(getHitbox(dude))):
@@ -294,6 +275,19 @@ def checkHitbox():
         cube.move(cube.x, cube.y-dude.speed )
     if(cube.getHitboxD().intersects(getHitbox(dude))):
         cube.move(cube.x, cube.y+dude.speed)
+
+def checkPortalCollision(entity):
+    #Si l'entité a atteint le sol alors on check les portails
+    if(entity.y+entity.height > 800):
+        #Si l'entité passe par le portail bleu
+        if(getHitbox(bluePortal).intersects(getHitbox(entity))):
+            teleport(entity, orangePortal.centerX, orangePortal.centerY)
+        #Si l'entité passe par le portail orange
+        elif(getHitbox(orangePortal).intersects(getHitbox(entity))):
+            teleport(entity, bluePortal.centerX, bluePortal.centerY)
+        else:
+            #L'entité n'est pas téléporté et a atteint le sol, on arrête de la faire tomber
+            entity.stop = True
     
 frameW = 1000
 frameH = 900
