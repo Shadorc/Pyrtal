@@ -67,9 +67,10 @@ class Dude():
         self.image = salle.create_image(self.x, self.y, image=self.photo, anchor=NW)
         self.width = self.photo.width()
         self.height = self.photo.height()
-        self.isFalling = False
         self.debug = 0
         self.speed = 20
+        self.isFalling = False
+        self.stop = True
 
     #Mouvements
     def move(self, event):
@@ -103,16 +104,21 @@ class Dude():
         checkHitbox()
 
     def goDown(self):
-        dude.isFalling = True
+        self.isFalling = True
         start = time.time()
-        while(self.y+self.height <= 800):
-            #y(t)=1/2gt²
-            self.y += 1/2  * 9.81 * (time.time() - start)**2
+        while(self.stop == False):
+            t = time.time() - start
+            g = 9.81
+            a = -g
+            self.speed = -g * t - 20
+            self.y = 1/2 * g * t**2 + self.y
+            #TODO: Définir une vitesse maximale (30), problème : self.y ne dépend pas de self.speed
+            print('Temps écoulé : ',round(t, 2),'| Accélération : ',round(a, 2),'| Vitesse : ',round(self.speed, 2))
             salle.coords(self.image, self.x, self.y)
             salle.update()
-            time.sleep(0.01)
-        dude.isFalling = False
-        checkHitbox()
+            checkHitbox()
+        self.isFalling = False
+        self.speed = 20
 
     def firstPlan(self):
         salle.delete(self.image)
@@ -120,11 +126,13 @@ class Dude():
         salle.update()
 
     def teleport(self, x, y):
+        self.stop = False
         self.x = x
         self.y = y
         salle.coords(self.image, self.x, self.y)
         self.firstPlan()
-        self.goDown()
+        if(self.isFalling == False):
+            self.goDown()
 
     def getHitbox(self):
         return Rect(self.x, self.y, self.width, self.height)
@@ -286,14 +294,17 @@ def checkHitbox():
     
     #Si les deux portails sont posés
     if(bluePortal != None and orangePortal != None):
-
-        if(dude.isFalling == False):
+        #Si le dude a atteint le sol alors on check les portails
+        if(dude.y+dude.height > 800):
             #Si le dude passe par le portail bleu
             if(bluePortal.getHitbox().intersects(dude.getHitbox())):
                 dude.teleport(orangePortal.centerX, orangePortal.centerY)
             #Si le dude passe par le portail orange
             elif(orangePortal.getHitbox().intersects(dude.getHitbox())):
                 dude.teleport(bluePortal.centerX, bluePortal.centerY)
+            else:
+                #Le dude n'est aps téléporté et a atteint le sol, on arrête de le faire tomber
+                dude.stop = True
 
         if(cube.isFalling == False):
             #Si le cube passe par le portail bleu
