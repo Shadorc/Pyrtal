@@ -253,8 +253,8 @@ def goDown(entity):
         while(entity.stop == False):
             t = time.time() - start
             g = 9.81
-            a = -g
-            entity.speed = -g * t - 20
+            a = g
+            entity.speed = g * t + 20
             entity.y = 1/2 * g * t**2 + entity.y
             #TODO: Définir une vitesse maximale (30), problème : self.y ne dépend pas de self.speed
             print('Temps écoulé : ',round(t, 2),'| Accélération : ',round(a, 2),'| Vitesse : ',round(entity.speed, 2))
