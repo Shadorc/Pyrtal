@@ -63,7 +63,7 @@ class Dude():
     def __init__(self, x, y):
         self.x = x
         self.y = y
-        self.photo = PhotoImage(file="Dude_sans_bras.gif")
+        self.photo = PhotoImage(file="dude_gris.gif")
         self.image = salle.create_image(self.x, self.y, image=self.photo, anchor=NW)
         self.width = self.photo.width()
         self.height = self.photo.height()
@@ -139,7 +139,7 @@ class Cube():
     def __init__(self, x, y):
         self.x = x
         self.y = y
-        self.photo = PhotoImage(file="Cube.gif")
+        self.photo = PhotoImage(file="cube.gif")
         self.width = self.photo.width()
         self.height = self.photo.height()
         self.image = salle.create_image(self.x, self.y, image = self.photo, anchor=NW)
