@@ -100,15 +100,6 @@ class Dude():
         salle.coords(self.image, self.x, self.y)
         checkHitbox()
 
-    def teleport(self, x, y):
-        self.stop = False
-        self.x = x
-        self.y = y
-        salle.coords(self.image, self.x, self.y)
-        firstPlan(self)
-        if(self.isFalling == False):
-            goDown(self)
-
 """
 #--------------------------------------------------------------------------------------#
 #----------------------------------CLASSE CUBE-----------------------------------------#
@@ -131,16 +122,6 @@ class Cube():
         self.x = x
         self.y = y
         salle.coords(self.image, self.x, self.y)
-
-    def teleport(self, x, y):
-        self.stop = False
-        self.x = x
-        self.y = y
-        salle.coords(self.image, self.x, self.y)
-        firstPlan(self)
-        if(self.isFalling == False):
-            t = threading.Thread(target=goDown(self))
-            t.start()
 
     def getHitboxL(self):
         return Rect(self.x, self.y, self.width/4, self.height)
@@ -248,6 +229,17 @@ def firstPlan(entity):
         entity.image = salle.create_image(entity.x, entity.y, image=entity.photo, anchor=NW)
         salle.update()
 
+def teleport(entity, x, y):
+        entity.stop = False
+        entity.x = x
+        entity.y = y
+        salle.coords(entity.image, entity.x, entity.y)
+        firstPlan(entity)
+        #FIXME: When cube and dude fall together, cube stop
+        if(entity.isFalling == False):
+            t = threading.Thread(target=goDown(entity))
+            t.start()
+
 def goDown(entity):
         entity.isFalling = True
         start = time.time()
@@ -274,10 +266,10 @@ def checkHitbox():
         if(dude.y+dude.height > 800):
             #Si le dude passe par le portail bleu
             if(getHitbox(bluePortal).intersects(getHitbox(dude))):
-                dude.teleport(orangePortal.centerX, orangePortal.centerY)
+                teleport(dude, orangePortal.centerX, orangePortal.centerY)
             #Si le dude passe par le portail orange
             elif(getHitbox(orangePortal).intersects(getHitbox(dude))):
-                dude.teleport(bluePortal.centerX, bluePortal.centerY)
+                teleport(dude, bluePortal.centerX, bluePortal.centerY)
             else:
                 #Le dude n'est pas téléporté et a atteint le sol, on arrête de le faire tomber
                 dude.stop = True
@@ -285,10 +277,10 @@ def checkHitbox():
         if(cube.y+cube.height > 800):
             #Si le cube passe par le portail bleu
             if(getHitbox(bluePortal).intersects(getHitbox(cube))):
-                cube.teleport(orangePortal.centerX, orangePortal.centerY)
+                teleport(cube, orangePortal.centerX, orangePortal.centerY)
             #Si le cube passe par le portail orange
             elif(getHitbox(orangePortal).intersects(getHitbox(cube))):
-                cube.teleport(bluePortal.centerX, bluePortal.centerY)
+                teleport(cube, bluePortal.centerX, bluePortal.centerY)
             else:
                 #Le cube n'est pas téléporté et a atteint le sol, on arrête de le faire tomber
                 cube.stop = True
