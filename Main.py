@@ -148,22 +148,30 @@ class Cube():
         self.x = x
         self.y = y
         self.photo = PhotoImage(file="cube.gif")
+        self.image = salle.create_image(self.x, self.y, image = self.photo, anchor=NW)
         self.width = self.photo.width()
         self.height = self.photo.height()
-        self.image = salle.create_image(self.x, self.y, image = self.photo, anchor=NW)
+        self.speed = 20
         self.isFalling = False
+        self.stop = True
+
 
     def goDown(self):
         self.isFalling = True
         start = time.time()
-        while(self.y+self.height <= 800):
-            #y(t)=1/2gt²
-            self.y += 1/2 * 9.81 * (time.time() - start)**2
+        while(self.stop == False):
+            t = time.time() - start
+            g = 9.81
+            a = -g
+            self.speed = -g * t - 20
+            self.y = 1/2 * g * t**2 + self.y
+            #TODO: Définir une vitesse maximale (30), problème : self.y ne dépend pas de self.speed
+            print('Temps écoulé : ',round(t, 2),'| Accélération : ',round(a, 2),'| Vitesse : ',round(self.speed, 2))
             salle.coords(self.image, self.x, self.y)
             salle.update()
-            time.sleep(0.01)
+            checkHitbox()
         self.isFalling = False
-        checkHitbox()
+        self.speed = 20
 
     def firstPlan(self):
         salle.delete(self.image)
@@ -171,12 +179,14 @@ class Cube():
         salle.update()
 
     def teleport(self, x, y):
+        self.stop = False
         self.x = x
         self.y = y
         salle.coords(self.image, self.x, self.y)
         self.firstPlan()
-        t = threading.Thread(target=self.goDown)
-        t.start()
+        if(self.isFalling == False):
+            t = threading.Thread(target=self.goDown)
+            t.start()
 
     def getHitbox(self):
         return Rect(self.x, self.y, self.width, self.height)
@@ -303,16 +313,19 @@ def checkHitbox():
             elif(orangePortal.getHitbox().intersects(dude.getHitbox())):
                 dude.teleport(bluePortal.centerX, bluePortal.centerY)
             else:
-                #Le dude n'est aps téléporté et a atteint le sol, on arrête de le faire tomber
+                #Le dude n'est pas téléporté et a atteint le sol, on arrête de le faire tomber
                 dude.stop = True
 
-        if(cube.isFalling == False):
+        if(cube.y+cube.height > 800):
             #Si le cube passe par le portail bleu
             if(bluePortal.getHitbox().intersects(cube.getHitbox())):
                 cube.teleport(orangePortal.centerX, orangePortal.centerY)
             #Si le cube passe par le portail orange
             elif(orangePortal.getHitbox().intersects(cube.getHitbox())):
                 cube.teleport(bluePortal.centerX, bluePortal.centerY)
+            else:
+                #Le cube n'est pas téléporté et a atteint le sol, on arrête de le faire tomber
+                cube.stop = True
 
     #Collisions entre le cube et le dude
     if(cube.getHitboxL().intersects(dude.getHitbox())):
