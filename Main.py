@@ -43,15 +43,12 @@ class Portal():
             #Hitbox Portail
             self.elements += [salle.create_rectangle(self.x, self.y, self.botX, self.botY)]
  
-            dude.firstPlan()
+            firstPlan(dude)
        
     def delete(self):
         #Efface tous les éléments contenus dans la liste
         for obj in self.elements:
             salle.delete(obj)
-
-    def getHitbox(self):
-        return Rect(self.topX, self.topY, self.width, self.height)
 
 """
 #--------------------------------------------------------------------------------------#
@@ -103,39 +100,14 @@ class Dude():
         salle.coords(self.image, self.x, self.y)
         checkHitbox()
 
-    def goDown(self):
-        self.isFalling = True
-        start = time.time()
-        while(self.stop == False):
-            t = time.time() - start
-            g = 9.81
-            a = -g
-            self.speed = -g * t - 20
-            self.y = 1/2 * g * t**2 + self.y
-            #TODO: Définir une vitesse maximale (30), problème : self.y ne dépend pas de self.speed
-            print('Temps écoulé : ',round(t, 2),'| Accélération : ',round(a, 2),'| Vitesse : ',round(self.speed, 2))
-            salle.coords(self.image, self.x, self.y)
-            salle.update()
-            checkHitbox()
-        self.isFalling = False
-        self.speed = 20
-
-    def firstPlan(self):
-        salle.delete(self.image)
-        self.image = salle.create_image(self.x, self.y, image=self.photo, anchor=NW)
-        salle.update()
-
     def teleport(self, x, y):
         self.stop = False
         self.x = x
         self.y = y
         salle.coords(self.image, self.x, self.y)
-        self.firstPlan()
+        firstPlan(self)
         if(self.isFalling == False):
-            self.goDown()
-
-    def getHitbox(self):
-        return Rect(self.x, self.y, self.width, self.height)
+            goDown(self)
 
 """
 #--------------------------------------------------------------------------------------#
@@ -155,40 +127,20 @@ class Cube():
         self.isFalling = False
         self.stop = True
 
-    def goDown(self):
-        self.isFalling = True
-        start = time.time()
-        while(self.stop == False):
-            t = time.time() - start
-            g = 9.81
-            a = -g
-            self.speed = -g * t - 20
-            self.y = 1/2 * g * t**2 + self.y
-            #TODO: Définir une vitesse maximale (30), problème : self.y ne dépend pas de self.speed
-            print('Temps écoulé : ',round(t, 2),'| Accélération : ',round(a, 2),'| Vitesse : ',round(self.speed, 2))
-            salle.coords(self.image, self.x, self.y)
-            salle.update()
-            checkHitbox()
-        self.isFalling = False
-        self.speed = 20
-
-    def firstPlan(self):
-        salle.delete(self.image)
-        self.image = salle.create_image(self.x, self.y, image=self.photo, anchor=NW)
-        salle.update()
+    def move(self, x, y):
+        self.x = x
+        self.y = y
+        salle.coords(self.image, self.x, self.y)
 
     def teleport(self, x, y):
         self.stop = False
         self.x = x
         self.y = y
         salle.coords(self.image, self.x, self.y)
-        self.firstPlan()
+        firstPlan(self)
         if(self.isFalling == False):
-            t = threading.Thread(target=self.goDown)
+            t = threading.Thread(target=goDown(self))
             t.start()
-
-    def getHitbox(self):
-        return Rect(self.x, self.y, self.width, self.height)
 
     def getHitboxL(self):
         return Rect(self.x, self.y, self.width/4, self.height)
@@ -200,12 +152,7 @@ class Cube():
         return Rect(self.x, self.y, self.width, self.height-self.height/3)
     
     def getHitboxD(self):
-        return Rect(self.x+self.height/2, self.y-self.width/2, self.width/4, self.height)
-    
-    def move(self, x, y):
-        self.x = x
-        self.y = y
-        salle.coords(self.image, self.x, self.y)
+        return Rect(self.x+self.height/2, self.y-self.width/2, self.width/4, self.height)    
 
 """
 #--------------------------------------------------------------------------------------#
@@ -293,6 +240,31 @@ def createPortal(event, color):
 
         checkHitbox()
 
+def getHitbox(entity):
+        return Rect(entity.x, entity.y, entity.width, entity.height)
+
+def firstPlan(entity):
+        salle.delete(entity.image)
+        entity.image = salle.create_image(entity.x, entity.y, image=entity.photo, anchor=NW)
+        salle.update()
+
+def goDown(entity):
+        entity.isFalling = True
+        start = time.time()
+        while(entity.stop == False):
+            t = time.time() - start
+            g = 9.81
+            a = -g
+            entity.speed = -g * t - 20
+            entity.y = 1/2 * g * t**2 + entity.y
+            #TODO: Définir une vitesse maximale (30), problème : self.y ne dépend pas de self.speed
+            print('Temps écoulé : ',round(t, 2),'| Accélération : ',round(a, 2),'| Vitesse : ',round(entity.speed, 2))
+            salle.coords(entity.image, entity.x, entity.y)
+            salle.update()
+            checkHitbox()
+        entity.isFalling = False
+        entity.speed = 20
+
 def checkHitbox():
     global dude, bluePortal, orangePortal
     
@@ -301,10 +273,10 @@ def checkHitbox():
         #Si le dude a atteint le sol alors on check les portails
         if(dude.y+dude.height > 800):
             #Si le dude passe par le portail bleu
-            if(bluePortal.getHitbox().intersects(dude.getHitbox())):
+            if(getHitbox(bluePortal).intersects(getHitbox(dude))):
                 dude.teleport(orangePortal.centerX, orangePortal.centerY)
             #Si le dude passe par le portail orange
-            elif(orangePortal.getHitbox().intersects(dude.getHitbox())):
+            elif(getHitbox(orangePortal).intersects(getHitbox(dude))):
                 dude.teleport(bluePortal.centerX, bluePortal.centerY)
             else:
                 #Le dude n'est pas téléporté et a atteint le sol, on arrête de le faire tomber
@@ -312,23 +284,23 @@ def checkHitbox():
 
         if(cube.y+cube.height > 800):
             #Si le cube passe par le portail bleu
-            if(bluePortal.getHitbox().intersects(cube.getHitbox())):
+            if(getHitbox(bluePortal).intersects(getHitbox(cube))):
                 cube.teleport(orangePortal.centerX, orangePortal.centerY)
             #Si le cube passe par le portail orange
-            elif(orangePortal.getHitbox().intersects(cube.getHitbox())):
+            elif(getHitbox(orangePortal).intersects(getHitbox(cube))):
                 cube.teleport(bluePortal.centerX, bluePortal.centerY)
             else:
                 #Le cube n'est pas téléporté et a atteint le sol, on arrête de le faire tomber
                 cube.stop = True
 
     #Collisions entre le cube et le dude
-    if(cube.getHitboxL().intersects(dude.getHitbox())):
+    if(cube.getHitboxL().intersects(getHitbox(dude))):
         cube.move(cube.x+dude.speed, cube.y)
-    if(cube.getHitboxR().intersects(dude.getHitbox())):
+    if(cube.getHitboxR().intersects(getHitbox(dude))):
         cube.move(cube.x-dude.speed, cube.y)
-    if(cube.getHitboxU().intersects(dude.getHitbox())):
+    if(cube.getHitboxU().intersects(getHitbox(dude))):
         cube.move(cube.x, cube.y-dude.speed )
-    if(cube.getHitboxD().intersects(dude.getHitbox())):
+    if(cube.getHitboxD().intersects(getHitbox(dude))):
         cube.move(cube.x, cube.y+dude.speed)
     
 frameW = 1000
