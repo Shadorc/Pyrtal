@@ -124,6 +124,7 @@ class Cube():
         self.y = y
         salle.coords(self.image, self.x, self.y)
 
+    #FIXME: Si le cube est touché dans un angle, il va avoir un comportement bizarre
     def getHitboxL(self):
         return Rect(self.x, self.y, 1, self.height)
 
@@ -142,6 +143,7 @@ class Cube():
 #--------------------------------------------------------------------------------------#
 """
 
+#TODO: Cette classe n'est plus utile
 class Gun():        
     def __init__(self, x, y, name):
         self.element = 0
@@ -197,7 +199,8 @@ def createPortal(event, color):
                 #Si le portail vient de la gauche, soustraire la différence pour le coller sur le bord gauche
                 else:
                     x -= simulPortal.width - abs(differenceX)
-                    
+
+            #TODO: Gérer les collisions entre portails par le dessus et dessous  
             elif(abs(differenceX) < otherPortal.width and abs(differenceY) < otherPortal.height and abs(differenceY) > abs(differenceX)):
                 
                 #Si le portail vient de la droite, ajouter la différence pour le coller contre le bord droite
@@ -207,6 +210,7 @@ def createPortal(event, color):
                 else:
                     y -= simulPortal.height - abs(differenceY)
 
+        #TODO: Il faut maintenant changer tout le dude et non plus juste le portal gun
         if(color == 'blue'):
             #Si le portail avait déjà été posé, l'effacer
             if(bluePortal != None):
@@ -229,14 +233,16 @@ def firstPlan(entity):
         salle.delete(entity.image)
         entity.image = salle.create_image(entity.x, entity.y, image=entity.photo, anchor=NW)
         salle.update()
-
+        
+#FIXME: Eviter que l'entité se téléporte en boucle (sera corrigé avec l'axe z)
 def teleport(entity, x, y):
         entity.stop = False
         entity.x = x
         entity.y = y
         salle.coords(entity.image, entity.x, entity.y)
         firstPlan(entity)
-        #FIXME: When cube and dude fall together, cube stop
+        #FIXME: Quand le cube et le dude tombent en même temps, le cube s'arrête
+        #TODO: Essayer de ne plus utiliser de Thread
         if(entity.isFalling == False):
             t = threading.Thread(target=goDown(entity))
             t.start()
@@ -258,6 +264,7 @@ def goDown(entity):
         entity.isFalling = False
         entity.speed = 20
 
+#TODO: Ajouter un axe z aux entités pour pouvoir passer devant / derrière
 def checkHitbox():
     global dude, cube, bluePortal, orangePortal
     
@@ -303,6 +310,8 @@ cube= Cube(300, 800)
 
 bluePortal = None
 orangePortal = None
+
+#TODO: faire une vraie salle avec de vrais murs (collisions)
 
 #Fond de la salle
 salle.create_rectangle(125,788,875,112)
