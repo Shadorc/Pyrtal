@@ -148,13 +148,12 @@ class Cube():
         self.x = x
         self.y = y
         self.photo = PhotoImage(file="cube.gif")
-        self.image = salle.create_image(self.x, self.y, image = self.photo, anchor=NW)
+        self.image = salle.create_image(self.x, self.y, image=self.photo, anchor=NW)
         self.width = self.photo.width()
         self.height = self.photo.height()
         self.speed = 20
         self.isFalling = False
         self.stop = True
-
 
     def goDown(self):
         self.isFalling = True
@@ -223,11 +222,6 @@ class Gun():
         self.image = salle.create_image(self.x, self.y, image=self.photo, anchor=SW)
         self.width = self.photo.width()
         self.height = self.photo.height()
-    """
-    def rotate(self, event):
-        salle.delete(self.element)
-        self.element = salle.create_line(dude.x+dude.width/2, dude.y+dude.height/3, event.x, event.y)
-    """
 
 """
 #--------------------------------------------------------------------------------------#
@@ -372,7 +366,6 @@ salle.focus_set()
 salle.bind("<Button-1>", lambda event: createPortal(event, 'blue'))
 salle.bind("<Button-3>", lambda event: createPortal(event, 'orange'))
 salle.bind("<KeyPress>", dude.move)
-#salle.bind("<Motion>", gun.rotate)
 
 chaine = Label(frame)
 chaine.pack()
