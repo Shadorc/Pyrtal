@@ -244,17 +244,11 @@ def goDown(entity):
             t = time.time() - start
             g = 9.81
             a = g
-<<<<<<< HEAD
-            entity.speed = g * t + 20
-            entity.y = 1/2 * g * t**2 + entity.y
-            #TODO: Définir une vitesse maximale (30), problème : self.y ne dépend pas de self.speed
-=======
             if entity.speed < 40: 
                 entity.speed = a * t + 20
                 entity.y = entity.speed * t + entity.y
             else:
                 entity.y = entity.speed + entity.y
->>>>>>> origin/master
             print('Temps écoulé :',round(t, 2),'| Accélération :',round(a, 2),'| Vitesse :',round(entity.speed, 2))
             salle.coords(entity.image, entity.x, entity.y)
             salle.update()
@@ -277,7 +271,7 @@ def checkHitbox():
     if(cube.getHitboxR().perspective(getHitbox(dude))):
         cube.move(cube.x-dude.speed, cube.y)
     if(cube.getHitboxU().perspective(getHitbox(dude))):
-        cube.move(cube.x, cube.y-dude.speed )
+        cube.move(cube.x, cube.y-dude.speed)
     if(cube.getHitboxD().perspective(getHitbox(dude))):
         cube.move(cube.x, cube.y+dude.speed)
 
