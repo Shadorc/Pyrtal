@@ -73,7 +73,7 @@ class Dude():
     #Mouvements
     def move(self, event):
         #Haut
-        if (event.char == 'z') and (810 <= self.y+self.height):
+        if (event.char == 'z') and (805 <= self.y+self.height):
             self.y -= self.speed
         #Bas
         elif (event.char == 's') and (self.y+self.height <= 890):
