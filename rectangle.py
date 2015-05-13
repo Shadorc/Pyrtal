@@ -14,6 +14,12 @@ class Rect():
         else:
             return False
 
+    def perspective(self, rect):
+        if(self.intersects(rect) and (rect.y-20 + rect.height < self.y + self.height < rect.y+20 + rect.height)):
+            return True
+        else:
+            return False
+
     """          width/2
               <--------->
     +-------------------+
