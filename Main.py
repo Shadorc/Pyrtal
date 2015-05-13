@@ -73,7 +73,7 @@ class Dude():
     #Mouvements
     def move(self, event):
         #Haut
-        if (event.char == 'z') and (800 <= self.y+self.height):
+        if (event.char == 'z') and (810 <= self.y+self.height):
             self.y -= self.speed
         #Bas
         elif (event.char == 's') and (self.y+self.height <= 890):
@@ -257,7 +257,7 @@ def goDown(entity):
             entity.speed = g * t + 20
             entity.y = 1/2 * g * t**2 + entity.y
             #TODO: Définir une vitesse maximale (30), problème : self.y ne dépend pas de self.speed
-            print('Temps écoulé : ',round(t, 2),'| Accélération : ',round(a, 2),'| Vitesse : ',round(entity.speed, 2))
+            print('Temps écoulé :',round(t, 2),'| Accélération :',round(a, 2),'| Vitesse :',round(entity.speed, 2))
             salle.coords(entity.image, entity.x, entity.y)
             salle.update()
             checkHitbox()
