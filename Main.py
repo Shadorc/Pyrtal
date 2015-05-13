@@ -131,9 +131,6 @@ class Cube():
 
     def getHitboxR(self):
         return Rect(self.x+(self.width-1), self.y, 1, self.height)
-
-    def getHitboxU(self):
-        return Rect(self.x, self.y, self.width, 1)
     
     def getHitboxD(self):
         return Rect(self.x, self.y+(self.height-1), self.width, 1)    
@@ -270,11 +267,11 @@ def checkHitbox():
         cube.move(cube.x+dude.speed, cube.y)
     if(cube.getHitboxR().perspective(getHitbox(dude))):
         cube.move(cube.x-dude.speed, cube.y)
-    if(cube.getHitboxU().perspective(getHitbox(dude))):
-        cube.move(cube.x, cube.y-dude.speed)
     if(cube.getHitboxD().perspective(getHitbox(dude))):
-        cube.move(cube.x, cube.y+dude.speed)
-
+        if(dude.y+dude.height > cube.y+cube.height):
+            cube.move(cube.x, cube.y-dude.speed)
+        else:
+            cube.move(cube.x, cube.y+dude.speed)
     if(dude.y+dude.height > cube.y+cube.height):
         firstPlan(dude)
     elif(dude.y+dude.height < cube.y+cube.height):
