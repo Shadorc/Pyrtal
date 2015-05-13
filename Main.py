@@ -265,13 +265,13 @@ def checkHitbox():
         checkPortalCollision(cube)
 
     #Collisions entre le cube et le dude
-    if(cube.getHitboxL().intersects(getHitbox(dude))):
+    if(cube.getHitboxL().perspective(getHitbox(dude))):
         cube.move(cube.x+dude.speed, cube.y)
-    if(cube.getHitboxR().intersects(getHitbox(dude))):
+    if(cube.getHitboxR().perspective(getHitbox(dude))):
         cube.move(cube.x-dude.speed, cube.y)
-    if(cube.getHitboxU().intersects(getHitbox(dude))):
+    if(cube.getHitboxU().perspective(getHitbox(dude))):
         cube.move(cube.x, cube.y-dude.speed )
-    if(cube.getHitboxD().intersects(getHitbox(dude))):
+    if(cube.getHitboxD().perspective(getHitbox(dude))):
         cube.move(cube.x, cube.y+dude.speed)
     firstPlan(dude)
     
