@@ -139,23 +139,6 @@ class Cube():
 
 """
 #--------------------------------------------------------------------------------------#
-#----------------------------------CLASSE GUN------------------------------------------#
-#--------------------------------------------------------------------------------------#
-"""
-
-#TODO: Cette classe n'est plus utile
-class Gun():        
-    def __init__(self, x, y, name):
-        self.element = 0
-        self.x = x
-        self.y = y
-        self.photo = PhotoImage(file=name)
-        self.image = salle.create_image(self.x, self.y, image=self.photo, anchor=SW)
-        self.width = self.photo.width()
-        self.height = self.photo.height()
-
-"""
-#--------------------------------------------------------------------------------------#
 #----------------------------------------MAIN------------------------------------------#
 #--------------------------------------------------------------------------------------#
 """
@@ -166,7 +149,7 @@ reloadingTime = 0.1
 
 #Créer un Portail
 def createPortal(event, color):
-    global lastShoot, bluePortal, orangePortal, gun
+    global lastShoot, bluePortal, orangePortal, dude
 
     if(time.time() - lastShoot > reloadingTime):
         lastShoot = time.time()
@@ -210,19 +193,25 @@ def createPortal(event, color):
                 else:
                     y -= simulPortal.height - abs(differenceY)
 
-        #TODO: Il faut maintenant changer tout le dude et non plus juste le portal gun
         if(color == 'blue'):
             #Si le portail avait déjà été posé, l'effacer
             if(bluePortal != None):
                 bluePortal.delete()
             bluePortal = Portal([x, y], '#6699ff', True)
-            gun = Gun(500, 500, "PGunB.gif")
+            name = "dude_bleu.gif"
 
         elif(color == 'orange'):
             if(orangePortal != None):
                 orangePortal.delete() 
             orangePortal = Portal([x, y], '#ff6600', True)
-            gun = Gun(500, 500, "PGunO.gif")
+            name = "dude_orange.gif"
+
+        dude.photo = PhotoImage(file=name)
+        dude.image = salle.create_image(dude.x, dude.y, image=dude.photo, anchor=NW)
+        dude.width = dude.photo.width()
+        dude.height = dude.photo.height()
+
+        firstPlan(dude)
 
         checkHitbox()
 
@@ -254,10 +243,12 @@ def goDown(entity):
             t = time.time() - start
             g = 9.81
             a = g
-            entity.speed = g * t + 20
-            entity.y = 1/2 * g * t**2 + entity.y
-            #TODO: Définir une vitesse maximale (30), problème : self.y ne dépend pas de self.speed
-            print('Temps écoulé : ',round(t, 2),'| Accélération : ',round(a, 2),'| Vitesse : ',round(entity.speed, 2))
+            if entity.speed < 40: 
+                entity.speed = a * t + 20
+                entity.y = entity.speed * t + entity.y
+            else:
+                entity.y = entity.speed + entity.y
+            print('Temps écoulé :',round(t, 2),'| Accélération :',round(a, 2),'| Vitesse :',round(entity.speed, 2))
             salle.coords(entity.image, entity.x, entity.y)
             salle.update()
             checkHitbox()
@@ -282,7 +273,8 @@ def checkHitbox():
         cube.move(cube.x, cube.y-dude.speed )
     if(cube.getHitboxD().intersects(getHitbox(dude))):
         cube.move(cube.x, cube.y+dude.speed)
-
+    firstPlan(dude)
+    
 def checkPortalCollision(entity):
     #Si l'entité a atteint le sol alors on check les portails
     if(entity.y+entity.height > 800):
@@ -305,7 +297,6 @@ frame.title("Pyrtal")
 salle = Canvas(frame, width=frameW, height=frameH)
 
 dude = Dude(450, 700)
-gun = Gun(500, 500, "PGunI.gif")
 cube= Cube(300, 800)
 
 bluePortal = None
