@@ -253,7 +253,6 @@ def goDown(entity):
         entity.isFalling = False
         entity.speed = 20
 
-#TODO: Ajouter un axe z aux entités pour pouvoir passer devant / derrière
 def checkHitbox():
     global dude, cube, bluePortal, orangePortal
     
@@ -265,13 +264,14 @@ def checkHitbox():
     #Collisions entre le cube et le dude
     if(cube.getHitboxL().perspective(getHitbox(dude))):
         cube.move(cube.x+dude.speed, cube.y)
-    if(cube.getHitboxR().perspective(getHitbox(dude))):
+    elif(cube.getHitboxR().perspective(getHitbox(dude))):
         cube.move(cube.x-dude.speed, cube.y)
     if(cube.getHitboxD().perspective(getHitbox(dude))):
         if(dude.y+dude.height > cube.y+cube.height):
             cube.move(cube.x, cube.y-dude.speed)
         else:
             cube.move(cube.x, cube.y+dude.speed)
+
     if(dude.y+dude.height > cube.y+cube.height):
         firstPlan(dude)
     elif(dude.y+dude.height < cube.y+cube.height):
@@ -279,7 +279,7 @@ def checkHitbox():
     
 def checkPortalCollision(entity):
     #Si l'entité a atteint le sol alors on check les portails
-    if(entity.y+entity.height > 800):
+    if(entity.y+entity.height >= 800):
         #Si l'entité passe par le portail bleu
         if(getHitbox(bluePortal).intersects(getHitbox(entity))):
             teleport(entity, orangePortal.centerX, orangePortal.centerY)
