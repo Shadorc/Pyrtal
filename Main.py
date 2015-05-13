@@ -120,9 +120,10 @@ class Cube():
         self.stop = True
 
     def move(self, x, y):
-        self.x = x
-        self.y = y
-        salle.coords(self.image, self.x, self.y)
+        if(800 <= self.y+self.height or self.y+self.height <= 890 or 140 <= self.x or self.x+self.width <= 855):
+            self.x = x
+            self.y = y
+            salle.coords(self.image, self.x, self.y)
 
     #FIXME: Si le cube est touché dans un angle, il va avoir un comportement bizarre
     def getHitboxL(self):
@@ -265,15 +266,19 @@ def checkHitbox():
         checkPortalCollision(cube)
 
     #Collisions entre le cube et le dude
-    if(cube.getHitboxL().intersects(getHitbox(dude))):
+    if(cube.getHitboxL().perspective(getHitbox(dude))):
         cube.move(cube.x+dude.speed, cube.y)
-    if(cube.getHitboxR().intersects(getHitbox(dude))):
+    if(cube.getHitboxR().perspective(getHitbox(dude))):
         cube.move(cube.x-dude.speed, cube.y)
-    if(cube.getHitboxU().intersects(getHitbox(dude))):
+    if(cube.getHitboxU().perspective(getHitbox(dude))):
         cube.move(cube.x, cube.y-dude.speed )
-    if(cube.getHitboxD().intersects(getHitbox(dude))):
+    if(cube.getHitboxD().perspective(getHitbox(dude))):
         cube.move(cube.x, cube.y+dude.speed)
-    firstPlan(dude)
+
+    if(dude.y+dude.height > cube.y+cube.height):
+        firstPlan(dude)
+    elif(dude.y+dude.height < cube.y+cube.height):
+        firstPlan(cube)
     
 def checkPortalCollision(entity):
     #Si l'entité a atteint le sol alors on check les portails
