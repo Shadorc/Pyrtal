@@ -43,8 +43,8 @@ class Portal():
             #Hitbox Portail
             self.elements += [salle.create_rectangle(self.x, self.y, self.botX, self.botY)]
  
-            firstPlan(dude)
-            firstPlan(cube)
+            salle.tag_raise(dude.image)
+            salle.tag_raise(cube.image)
        
     def delete(self):
         #Efface tous les éléments contenus dans la liste
@@ -209,17 +209,12 @@ def createPortal(event, color):
         dude.width = dude.photo.width()
         dude.height = dude.photo.height()
 
-        firstPlan(dude)
-
+        salle.tag_raise(dude.image)
+        
         checkHitbox()
 
 def getHitbox(entity):
         return Rect(entity.x, entity.y, entity.width, entity.height)
-
-def firstPlan(entity):
-        salle.delete(entity.image)
-        entity.image = salle.create_image(entity.x, entity.y, image=entity.photo, anchor=NW)
-        salle.update()
         
 #FIXME: Eviter que l'entité se téléporte en boucle (sera corrigé avec l'axe z)
 def teleport(entity, x, y):
@@ -227,7 +222,7 @@ def teleport(entity, x, y):
         entity.x = x
         entity.y = y
         salle.coords(entity.image, entity.x, entity.y)
-        firstPlan(entity)
+        salle.tag_raise(entity.image)
         #FIXME: Quand le cube et le dude tombent en même temps, le cube s'arrête
         #TODO: Essayer de ne plus utiliser de Thread
         if(entity.isFalling == False):
@@ -273,9 +268,9 @@ def checkHitbox():
             cube.move(cube.x, cube.y+dude.speed)
 
     if(dude.y+dude.height > cube.y+cube.height):
-        firstPlan(dude)
+        salle.tag_raise(dude.image)
     elif(dude.y+dude.height < cube.y+cube.height):
-        firstPlan(cube)
+        salle.tag_raise(cube.image)
     
 def checkPortalCollision(entity):
     #Si l'entité a atteint le sol alors on check les portails
