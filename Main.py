@@ -276,7 +276,7 @@ def checkHitbox():
     
 def checkPortalCollision(entity):
     #Si l'entité a atteint le sol alors on check les portails
-    if(entity.y+entity.height >= 800):
+    if(entity.y+entity.height >= 780):
         #Si l'entité passe par le portail bleu
         if(getHitbox(bluePortal).intersects(getHitbox(entity))):
             teleport(entity, orangePortal.centerX, orangePortal.centerY)
