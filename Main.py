@@ -223,10 +223,9 @@ def teleport(entity, x, y):
         entity.y = y
         salle.coords(entity.image, entity.x, entity.y)
         salle.tag_raise(entity.image)
-        #FIXME: Quand le cube et le dude tombent en même temps, le cube s'arrête
         #TODO: Essayer de ne plus utiliser de Thread
         if(entity.isFalling == False):
-            t = threading.Thread(target=goDown(entity))
+            t = threading.Thread(target=goDown, args=(entity,))
             t.start()
 
 def goDown(entity):
