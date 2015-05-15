@@ -173,23 +173,21 @@ def createPortal(event, color):
             differenceY = simulPortal.centerY - otherPortal.centerY
             
             if(abs(differenceX) < otherPortal.width and abs(differenceY) < otherPortal.height):
-                
-                #Si le portail vient de la droite, ajouter la différence pour le coller contre le bord droite
-                if(differenceX >= 0):
-                    x += simulPortal.width - abs(differenceX)
-                #Si le portail vient de la gauche, soustraire la différence pour le coller sur le bord gauche
-                else:
-                    x -= simulPortal.width - abs(differenceX)
+                if(sqrt((differenceX)**2 + (differenceY)**2) < otherPortal.height-50):
+                    #Si le portail vient de la droite, ajouter la différence pour le coller contre le bord droite
+                    if(differenceX >= 0):
+                        x += simulPortal.width - abs(differenceX)
+                    #Si le portail vient de la gauche, soustraire la différence pour le coller sur le bord gauche
+                    else:
+                        x -= simulPortal.width - abs(differenceX)
 
-            #TODO: Gérer les collisions entre portails par le dessus et dessous  
-            elif(abs(differenceX) < otherPortal.width and abs(differenceY) < otherPortal.height and abs(differenceY) > abs(differenceX)):
-                
-                #Si le portail vient de la droite, ajouter la différence pour le coller contre le bord droite
-                if(differenceY >= 0):
-                    y += simulPortal.height - abs(differenceY)
-                #Si le portail vient de la gauche, soustraire la différence pour le coller sur le bord gauche
                 else:
-                    y -= simulPortal.height - abs(differenceY)
+                    #Si le portail vient de la droite, ajouter la différence pour le coller contre le bord droite
+                    if(differenceY >= 0):
+                        y += simulPortal.height - abs(differenceY)
+                    #Si le portail vient de la gauche, soustraire la différence pour le coller sur le bord gauche
+                    else:
+                        y -= simulPortal.height - abs(differenceY)
 
         if(color == 'blue'):
             #Si le portail avait déjà été posé, l'effacer
