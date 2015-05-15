@@ -240,7 +240,7 @@ def goDown(entity):
                 entity.y = entity.speed * t + entity.y
             else:
                 entity.y = entity.speed + entity.y
-            print('Temps écoulé :',round(t, 2),'| Accélération :',round(a, 2),'| Vitesse :',round(entity.speed, 2))
+            print('Entité :',entity.__class__.__name__,'| Temps écoulé :',round(t, 2),'| Vitesse :',round(entity.speed, 2))
             salle.coords(entity.image, entity.x, entity.y)
             salle.update()
             checkHitbox()
