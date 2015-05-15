@@ -87,9 +87,14 @@ class Dude():
         #The Game Easter Egg
         elif (event.char == ' '):
             text = salle.create_text(self.x+100, self.y, text="The Game")
-            while self.y > -100:
-                self.y -= 1
-                time.sleep(0.01)
+            self.isFalling = True
+            start = time.time()
+            while(self.y > -self.height):
+                t = time.time() - start
+                g = 0.25
+                a = -g
+                self.speed = a * t
+                self.y = self.speed * t + self.y
                 salle.coords(self.image, self.x, self.y)
                 salle.coords(text, self.x+100, self.y)
                 salle.update()
