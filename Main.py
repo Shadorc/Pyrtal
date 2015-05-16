@@ -211,6 +211,12 @@ def createPortal(event, color):
         
         checkHitbox()
 
+"""
+#--------------------------------------------------------------------------------------#
+#----------------------------------METHODS ENTITIES------------------------------------#
+#--------------------------------------------------------------------------------------#
+"""
+
 def getHitbox(entity):
         return Rect(entity.x, entity.y, entity.width, entity.height)
         
@@ -246,6 +252,12 @@ def goDown(entity):
         entity.isFalling = False
         entity.speed = 20
 
+"""
+#--------------------------------------------------------------------------------------#
+#-----------------------------------------HITBOX---------------------------------------#
+#--------------------------------------------------------------------------------------#
+"""
+
 def checkHitbox():
     global dude, cube, bluePortal, orangePortal
     
@@ -265,6 +277,7 @@ def checkHitbox():
         elif(dude.lastMove == 'left'):
             cube.move(cube.x-dude.speed, cube.y)
 
+    #Met le Cube ou le Dude en premier plan en fonction de qui est devant l'autre
     if(dude.y+dude.height > cube.y+cube.height):
         salle.tag_raise(dude.image)
     elif(dude.y+dude.height < cube.y+cube.height):
@@ -315,7 +328,7 @@ salle.create_line(0, 0, 125, 112)
 salle.focus_set()
 
 dude = Dude(450, 700)
-cube= Cube(300, 800)
+cube = Cube(300, 800)
 
 #Configure les touches souris / clavier
 salle.bind("<Button-1>", lambda event: createPortal(event, 'blue'))
