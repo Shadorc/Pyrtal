@@ -130,7 +130,7 @@ class Cube():
         self.stop = True
 
     def move(self, x, y):
-        if(800 <= self.y+self.height or self.y+self.height <= 890 or 140 <= self.x or self.x+self.width <= 855):
+        if(x > floor.x and x+self.width < floor.x+floor.width and y+self.height > floor.y and y+self.height < floor.y+floor.height):
             self.x = x
             self.y = y
             salle.coords(self.image, self.x, self.y)
@@ -238,6 +238,7 @@ def goDown(entity):
                 entity.y = entity.speed * t + entity.y
             else:
                 entity.y = entity.speed + entity.y
+            entity.lastMove = 'down'
             print('Entité :',entity.__class__.__name__,'| Temps écoulé :',round(t, 2),'| Vitesse :',round(entity.speed, 2))
             salle.coords(entity.image, entity.x, entity.y)
             salle.update()
@@ -271,7 +272,7 @@ def checkHitbox():
     
 def checkPortalCollision(entity):
     #Si l'entité a atteint le sol alors on check les portails
-    if(entity.y+entity.height >= 780):
+    if(getHitbox(entity).intersects(floor)):
         #Si l'entité passe par le portail bleu
         if(getHitbox(bluePortal).intersects(getHitbox(entity))):
             teleport(entity, orangePortal.centerX, orangePortal.centerY)
@@ -297,6 +298,8 @@ orangePortal = None
 
 #Fond de la salle
 salle.create_rectangle(125,788,875,112)
+
+floor = Rect(125, 788, 875-125, frameH-788)
 
 """Effet de profondeur (lignes diagonales)"""
 #Bas gauche
