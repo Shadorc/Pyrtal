@@ -69,21 +69,26 @@ class Dude():
         self.speed = 20
         self.isFalling = False
         self.stop = True
+        self.lastMove = ''
 
     #Mouvements
     def move(self, event):
         #Haut
         if (event.char == 'z') and (805 <= self.y+self.height):
             self.y -= self.speed
+            self.lastMove = 'up'
         #Bas
         elif (event.char == 's') and (self.y+self.height <= 890):
             self.y += self.speed
+            self.lastMove = 'down'
         #Gauche
         elif (event.char == 'q') and (140 <= self.x):
             self.x -= self.speed
+            self.lastMove = 'left'
         #Droite
         elif (event.char == 'd') and (self.x+self.width <= 855):
             self.x += self.speed
+            self.lastMove = 'right'
         #The Game Easter Egg
         elif (event.char == ' '):
             text = salle.create_text(self.x+100, self.y, text="The Game")
@@ -129,16 +134,6 @@ class Cube():
             self.x = x
             self.y = y
             salle.coords(self.image, self.x, self.y)
-
-    #FIXME: Si le cube est touché dans un angle, il va avoir un comportement bizarre
-    def getHitboxL(self):
-        return Rect(self.x, self.y, 1, self.height)
-
-    def getHitboxR(self):
-        return Rect(self.x+(self.width-1), self.y, 1, self.height)
-    
-    def getHitboxD(self):
-        return Rect(self.x, self.y+(self.height-1), self.width, 1)    
 
 """
 #--------------------------------------------------------------------------------------#
@@ -259,15 +254,15 @@ def checkHitbox():
         checkPortalCollision(cube)
 
     #Collisions entre le cube et le dude
-    if(cube.getHitboxL().perspective(getHitbox(dude))):
-        cube.move(cube.x+dude.speed, cube.y)
-    elif(cube.getHitboxR().perspective(getHitbox(dude))):
-        cube.move(cube.x-dude.speed, cube.y)
-    if(cube.getHitboxD().perspective(getHitbox(dude))):
-        if(dude.y+dude.height > cube.y+cube.height):
+    if(getHitbox(cube).perspective(getHitbox(dude))):
+        if(dude.lastMove == 'up'):
             cube.move(cube.x, cube.y-dude.speed)
-        else:
+        elif(dude.lastMove == 'down'):
             cube.move(cube.x, cube.y+dude.speed)
+        elif(dude.lastMove == 'right'):
+            cube.move(cube.x+dude.speed, cube.y)
+        elif(dude.lastMove == 'left'):
+            cube.move(cube.x-dude.speed, cube.y)
 
     if(dude.y+dude.height > cube.y+cube.height):
         salle.tag_raise(dude.image)
