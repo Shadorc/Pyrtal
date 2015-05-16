@@ -295,9 +295,6 @@ frame.title("Pyrtal")
 
 salle = Canvas(frame, width=frameW, height=frameH)
 
-dude = Dude(450, 700)
-cube= Cube(300, 800)
-
 bluePortal = None
 orangePortal = None
 
@@ -318,6 +315,9 @@ salle.create_line(0, 0, 125, 112)
 
 #Focus sur la fenêtre pour pouvoir recevoir les clics de souris et l'appuie de touches
 salle.focus_set()
+
+dude = Dude(450, 700)
+cube= Cube(300, 800)
 
 #Configure les touches souris / clavier
 salle.bind("<Button-1>", lambda event: createPortal(event, 'blue'))
