@@ -67,7 +67,6 @@ class Dude():
         self.height = self.photo.height()
         self.debug = 0
         self.speed = 20
-        self.a = 9.81
         self.isFalling = False
         self.stop = True
         self.lastMove = ''
@@ -127,7 +126,6 @@ class Cube():
         self.width = self.photo.width()
         self.height = self.photo.height()
         self.speed = 20
-        self.a = 9.81
         self.isFalling = False
         self.stop = True
 
@@ -239,8 +237,9 @@ def goDown(entity):
         start = time.time()
         while(entity.stop == False):
             t = time.time() - start
-            if abs(entity.speed) < 40:
-                entity.speed = entity.a * t + 20
+            if(entity.speed < 40):
+                a = 9.81
+                entity.speed = a * t + entity.speed
                 entity.y = entity.speed * t + entity.y
             else:
                 entity.y = entity.speed + entity.y
@@ -288,18 +287,14 @@ def checkPortalCollision(entity):
     if(getHitbox(entity).intersects(floor)):
         #Si l'entité passe par le portail bleu
         if(getHitbox(bluePortal).intersects(getHitbox(entity))):
-            teleport(entity, orangePortal.centerX, orangePortal.centerY-700)
-            if getHitbox(orangePortal).intersects(floor):
-                entity.a = -entity.a
-            else:
-                entity.a = 9.81
+            teleport(entity, orangePortal.centerX, orangePortal.centerY-dude.height*2)
+            if(getHitbox(orangePortal).intersects(floor)):
+                entity.speed = -entity.speed
         #Si l'entité passe par le portail orange
         elif(getHitbox(orangePortal).intersects(getHitbox(entity))):
-            teleport(entity, bluePortal.centerX, bluePortal.centerY-700)
-            if getHitbox(bluePortal).intersects(floor):
-                entity.a = -entity.a
-            else:
-                entity.a = 9.81
+            teleport(entity, bluePortal.centerX, bluePortal.centerY-dude.height*2)
+            if(getHitbox(bluePortal).intersects(floor)):
+                entity.speed = -entity.speed
         
         else:
             #L'entité n'est pas téléporté et a atteint le sol, on arrête de la faire tomber
