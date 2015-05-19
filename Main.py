@@ -237,14 +237,13 @@ def goDown(entity):
         start = time.time()
         while(entity.stop == False):
             t = time.time() - start
-            if(entity.speed < 40):
-                a = 9.81
+            start = time.time()
+            a = 981
+            if(abs(entity.speed < 5000)):
                 entity.speed = a * t + entity.speed
-                entity.y = entity.speed * t + entity.y
-            else:
-                entity.y = entity.speed + entity.y
+            entity.y = entity.speed * t + entity.y
             entity.lastMove = 'down'
-            print('Entité :',entity.__class__.__name__,'| Temps écoulé :',round(t, 2),'| Vitesse :',round(entity.speed, 2))
+            print('Entité :',entity.__class__.__name__,'| Temps écoulé :',round(t, 2),'| Vitesse :',round(entity.speed, 2),'| Move :', round(entity.speed * t, 2))
             salle.coords(entity.image, entity.x, entity.y)
             salle.update()
             checkHitbox()
