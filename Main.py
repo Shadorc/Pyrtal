@@ -63,10 +63,11 @@ class Dude():
         self.y = y
         self.photo = PhotoImage(file="dude_gris.gif")
         self.image = salle.create_image(self.x, self.y, image=self.photo, anchor=NW)
-        self.width = self.photo.width()
+        self.width = self.photo.width() - self.photo.width()/4
         self.height = self.photo.height()
         self.debug = 0
         self.speed = 20
+        self.speedX = 0
         self.isFalling = False
         self.stop = True
         self.lastMove = ''
@@ -74,20 +75,20 @@ class Dude():
     #Mouvements
     def move(self, event):
         #Haut
-        if (event.char == 'z') and (805 <= self.y+self.height):
-            self.y -= self.speed
+        if (event.char == 'z') and (floor.y < self.y+self.height-20):
+            self.y -= abs(self.speed)
             self.lastMove = 'up'
         #Bas
-        elif (event.char == 's') and (self.y+self.height <= 890):
-            self.y += self.speed
+        elif (event.char == 's') and (self.y+self.height < floor.y+floor.height):
+            self.y += abs(self.speed)
             self.lastMove = 'down'
         #Gauche
-        elif (event.char == 'q') and (140 <= self.x):
-            self.x -= self.speed
+        elif (event.char == 'q') and (floor.x+40 < self.x-self.width):
+            self.x -= abs(self.speed)
             self.lastMove = 'left'
         #Droite
-        elif (event.char == 'd') and (self.x+self.width <= 855):
-            self.x += self.speed
+        elif (event.char == 'd') and (self.x+self.width < floor.width-rightWall.width):
+            self.x += abs(self.speed)
             self.lastMove = 'right'
         #The Game Easter Egg
         elif (event.char == ' '):
@@ -126,6 +127,7 @@ class Cube():
         self.width = self.photo.width()
         self.height = self.photo.height()
         self.speed = 20
+        self.speedX = 0
         self.isFalling = False
         self.stop = True
 
@@ -162,11 +164,16 @@ def createPortal(event, color):
             portal = orangePortal
             otherPortal = bluePortal
 
+        #Créé un faux portail pour voir s'il peut être posé 
+        simulPortal = Portal([x, y], color, False)
+
+        if((getHitbox(simulPortal).intersects(floor) or getHitbox(simulPortal).intersects(ceiling)) and (getHitbox(simulPortal).intersects(leftWall) or getHitbox(simulPortal).intersects(rightWall))):
+            print('return')
+            return
+
         #Vérifie si le portail qui va être créé n'est pas posé par dessus le deuxième
         if(otherPortal != None):
-            #Créé un faux portail pour voir s'il peut être posé 
-            simulPortal = Portal([x, y], color, False)
-
+            
             #Distance entre le centreX des deux portails
             differenceX = simulPortal.centerX - otherPortal.centerX
             #Distance entre le centreY des deux portails
@@ -229,27 +236,47 @@ def teleport(entity, x, y):
         salle.tag_raise(entity.image)
         #TODO: Essayer de ne plus utiliser de Thread
         if(entity.isFalling == False):
-            t = threading.Thread(target=goDown, args=(entity,))
-            t.start()
+            momentum(entity)
+            #t = threading.Thread(target=momentum, args=(entity,))
+            #t.start()
 
-def goDown(entity):
+def momentum(entity):
         entity.isFalling = True
         start = time.time()
         while(entity.stop == False):
             t = time.time() - start
             start = time.time()
-            a = 981
-            if(abs(entity.speed < 5000)):
+            t = t*10
+            a = 9.81
+            
+            if(abs(entity.speed < 200)):
                 entity.speed = a * t + entity.speed
+                
             entity.y = entity.speed * t + entity.y
+            entity.x = entity.speedX/50 + entity.x
+
+            secondCeiling = Rect(ceiling.x, ceiling.y, ceiling.width, ceiling.height/2)
+            secondLeftWall = Rect(leftWall.x, leftWall.y, leftWall.width/2, leftWall.height)
+            secondRightWall = Rect(rightWall.x+rightWall.width/2, rightWall.y, rightWall.width/2, rightWall.height) 
+            
+            if getHitbox(entity).intersects(secondCeiling):
+                entity.speed = 0
+                #Au cas où l'entité est dans le plafond, la descendre
+                entity.y = ceiling.height+1
+            elif getHitbox(entity).intersects(secondLeftWall) or getHitbox(entity).intersects(secondRightWall):
+                entity.speedX = 0 
+                
+            
             if(entity.speed < 0):
                 entity.lastMove = 'up'
             else:
                 entity.lastMove = 'down'
+
             #print('Entité :',entity.__class__.__name__,'| Temps écoulé :',round(t, 2),'| Vitesse :',round(entity.speed, 2),'| Move :', round(entity.speed * t, 2))
             salle.coords(entity.image, entity.x, entity.y)
             salle.update()
             checkHitbox()
+            time.sleep(0.001)
         entity.isFalling = False
         entity.speed = 20
 
@@ -287,17 +314,33 @@ def checkHitbox():
 def checkPortalCollision(entity):
     #Si l'entité a atteint le sol alors on check les portails
     if(getHitbox(entity).intersects(floor)):
-        #Si l'entité passe par le portail bleu
-        if(getHitbox(bluePortal).intersects(getHitbox(entity))):
-            teleport(entity, orangePortal.centerX, orangePortal.centerY-dude.height*2)
-            if(getHitbox(orangePortal).intersects(floor)):
+
+        if(getHitbox(bluePortal).intersects(getHitbox(entity)) or getHitbox(orangePortal).intersects(getHitbox(entity))):
+            #Si l'entité passe par le portail bleu
+            if(getHitbox(bluePortal).intersects(getHitbox(entity))):
+                portal = orangePortal
+            #Si l'entité passe par le portail orange
+            else:
+                portal = bluePortal
+
+            #On cherche où positionner l'entité par rapport au portail
+            if(getHitbox(portal).intersects(floor)):
+                y = portal.centerY-(dude.height+portal.height/2)
+            elif(getHitbox(portal).intersects(ceiling)):
+                y = portal.centerY+(portal.height/2)
+            else:
+                y = portal.centerY
+                
+            teleport(entity, portal.centerX, y)
+
+            #On modifie les vitesses en fonction de là où il sort
+            if(getHitbox(portal).intersects(floor)):
                 entity.speed = -entity.speed
-        #Si l'entité passe par le portail orange
-        elif(getHitbox(orangePortal).intersects(getHitbox(entity))):
-            teleport(entity, bluePortal.centerX, bluePortal.centerY-dude.height*2)
-            if(getHitbox(bluePortal).intersects(floor)):
-                entity.speed = -entity.speed
-        
+            elif getHitbox(portal).intersects(leftWall):
+                entity.speedX = entity.speed
+            elif getHitbox(portal).intersects(rightWall):
+                entity.speedX = -entity.speed
+                
         else:
             #L'entité n'est pas téléporté et a atteint le sol, on arrête de la faire tomber
             entity.stop = True
@@ -318,7 +361,10 @@ orangePortal = None
 #Fond de la salle
 salle.create_rectangle(125,788,875,112)
 
-floor = Rect(125, 788, 875-125, frameH-788)
+floor = Rect(0, 788, frameW, 125)
+ceiling = Rect(0, 0, frameW, 125)
+leftWall = Rect(0, 0, 125, frameH)
+rightWall = Rect(frameW-125, 0, 125, frameH)
 
 """Effet de profondeur (lignes diagonales)"""
 #Bas gauche
@@ -334,7 +380,7 @@ salle.create_line(0, 0, 125, 112)
 salle.focus_set()
 
 dude = Dude(450, 700)
-cube = Cube(300, 800)
+cube = Cube(10000, 850)
 
 #Configure les touches souris / clavier
 salle.bind("<Button-1>", lambda event: createPortal(event, 'blue'))
