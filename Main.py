@@ -151,6 +151,14 @@ def createBluePortal(event):
 def createOrangePortal(event):
     createPortal(event.x, event.y, 'orange')
 
+def portalPlacement(coordinate, size, bound1, bound2):
+    if(coordinate+size > bound1):
+        return (coordinate - (coordinate+size - bound1))
+    elif(coordinate-size < bound2):
+        return (coordinate - (coordinate-size - bound2))
+    else:
+        return coordinate
+
 #Créer un Portail
 def createPortal(x, y, color):
     global bluePortal, orangePortal, dude
@@ -166,11 +174,22 @@ def createPortal(x, y, color):
             portal = orangePortal
             otherPortal = bluePortal
 
+        #Si le portail est posé sur le fond de la salle
         if((leftWall.width < x < rightWall.x) and (ceiling.height < y < floor.y)):
-            if(y+150 > floor.y):
-                y = y - (y+150 - floor.y)
-            elif(y-150 < ceiling.height):
-                y = y - (y-150 - ceiling.height)
+            y = portalPlacement(y, 150, floor.y, ceiling.height)
+            x = portalPlacement(x, 55, rightWall.x, leftWall.width)
+        #Si le portail est sur le plafond
+        elif(0 < y < ceiling.height):
+            y = portalPlacement(y, 55, ceiling.height, ceiling.y)
+        #Si le portail est sur le sol
+        elif(floor.y < y < floor.y+floor.height):
+            y = portalPlacement(y, 55, floor.y+floor.height, floor.y)
+        #Si le portail est sur le mur droit
+        elif(rightWall.x < x < rightWall.x+rightWall.width):
+            x = portalPlacement(x, 55, rightWall.x+rightWall.width, rightWall.x)
+        #Si le portail est sur le mur gauche
+        elif(leftWall.x < x < leftWall.x+leftWall.width):
+            x = portalPlacement(x, 55, leftWall.x+leftWall.width, leftWall.x)
 
         #Créé un faux portail pour voir s'il peut être posé 
         simulPortal = Portal([x, y], color, False)
