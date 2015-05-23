@@ -233,9 +233,8 @@ def teleport(entity, x, y):
         salle.coords(entity.image, entity.x, entity.y)
         salle.tag_raise(entity.image)
         if(entity.isFalling == False):
-            momentum(entity)
-            #t = threading.Thread(target=momentum, args=(entity,))
-            #t.start()
+            t = threading.Thread(target=momentum, args=(entity,))
+            t.start()
 
 def momentum(entity):
         entity.isFalling = True
@@ -375,7 +374,7 @@ salle.create_line(0, 0, 125, 112)
 salle.focus_set()
 
 dude = Dude(450, 700)
-cube = Cube(10000, 850)
+cube = Cube(600, 800)
 
 #Configure les touches souris / clavier
 salle.bind("<Button-1>", lambda event: createPortal(event, 'blue'))
