@@ -345,13 +345,22 @@ def checkPortalCollision(entity):
 
             #On cherche où positionner l'entité par rapport au portail
             if(getHitbox(portal).intersects(floor)):
-                y = portal.centerY-(dude.height+portal.height/2)
+                y = portal.centerY-(entity.height+portal.height/2)-5
+                x = portal.centerX - entity.width/2
             elif(getHitbox(portal).intersects(ceiling)):
-                y = portal.centerY+(portal.height/2)
+                y = portal.centerY+(portal.height/2)+5
+                x = portal.centerX - entity.width/2
+            elif(getHitbox(portal).intersects(leftWall)):
+                y = portal.centerY-entity.height/2
+                x = portal.centerX + portal.width/2
+            elif(getHitbox(portal).intersects(rightWall)):
+                y = portal.centerY-entity.height/2
+                x = portal.centerX - portal.width/2
             else:
-                y = portal.centerY
+                y = portal.centerY-entity.height/2
+                x = portal.centerX-entity.width/2
                 
-            teleport(entity, portal.centerX, y)
+            teleport(entity, x, y)
 
             #On modifie les vitesses en fonction de là où il sort
             if(getHitbox(portal).intersects(floor)):
