@@ -254,7 +254,7 @@ def momentum(entity):
                 entity.speedY = a * t + entity.speedY
                 
             entity.y = entity.speedY * t + entity.y
-            entity.x = entity.speedX/50 + entity.x
+            entity.x = entity.speedX * t + entity.x
 
             secondCeiling = Rect(ceiling.x, ceiling.y, ceiling.width, ceiling.height/2)
             secondLeftWall = Rect(leftWall.x, leftWall.y, leftWall.width/2, leftWall.height)
