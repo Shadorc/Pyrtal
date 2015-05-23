@@ -63,8 +63,8 @@ class Dude():
         self.y = y
         self.setImage("dude_gris.gif")
         self.debug = 0
-        self.speed = 20
-        self.speedX = 0
+        self.speedY = 20
+        self.speedX = 20
         self.isFalling = False
         self.stop = True
         self.lastMove = ''
@@ -79,19 +79,19 @@ class Dude():
     def move(self, event):
         #Haut
         if (event.char == 'z') and (floor.y < self.y+self.height-20):
-            self.y -= abs(self.speed)
+            self.y -= abs(self.speedY)
             self.lastMove = 'up'
         #Bas
         elif (event.char == 's') and (self.y+self.height < floor.y+floor.height):
-            self.y += abs(self.speed)
+            self.y += abs(self.speedY)
             self.lastMove = 'down'
         #Gauche
         elif (event.char == 'q') and (floor.x+40 < self.x-self.width):
-            self.x -= abs(self.speed)
+            self.x -= abs(self.speedX)
             self.lastMove = 'left'
         #Droite
         elif (event.char == 'd') and (self.x+self.width < floor.width-rightWall.width):
-            self.x += abs(self.speed)
+            self.x += abs(self.speedX)
             self.lastMove = 'right'
         #The Game Easter Egg
         elif (event.char == ' '):
@@ -102,8 +102,8 @@ class Dude():
                 t = time.time() - start
                 g = 0.25
                 a = -g
-                self.speed = a * t
-                self.y = self.speed * t + self.y
+                self.speedY = a * t
+                self.y = self.speedY * t + self.y
                 salle.coords(self.image, self.x, self.y)
                 salle.coords(text, self.x+100, self.y)
                 salle.update()
@@ -129,7 +129,7 @@ class Cube():
         self.image = salle.create_image(self.x, self.y, image=self.photo, anchor=NW)
         self.width = self.photo.width()
         self.height = self.photo.height()
-        self.speed = 20
+        self.speedY = 20
         self.speedX = 0
         self.isFalling = False
         self.stop = True
@@ -245,10 +245,10 @@ def momentum(entity):
             t = t*10
             a = 9.81
             
-            if(abs(entity.speed < 200)):
-                entity.speed = a * t + entity.speed
+            if(abs(entity.speedY < 200)):
+                entity.speedY = a * t + entity.speedY
                 
-            entity.y = entity.speed * t + entity.y
+            entity.y = entity.speedY * t + entity.y
             entity.x = entity.speedX/50 + entity.x
 
             secondCeiling = Rect(ceiling.x, ceiling.y, ceiling.width, ceiling.height/2)
@@ -256,25 +256,25 @@ def momentum(entity):
             secondRightWall = Rect(rightWall.x+rightWall.width/2, rightWall.y, rightWall.width/2, rightWall.height) 
             
             if getHitbox(entity).intersects(secondCeiling):
-                entity.speed = 0
+                entity.speedY = 0
                 #Au cas où l'entité est dans le plafond, la descendre
                 entity.y = ceiling.height+1
             elif getHitbox(entity).intersects(secondLeftWall) or getHitbox(entity).intersects(secondRightWall):
                 entity.speedX = 0 
                 
             
-            if(entity.speed < 0):
+            if(entity.speedY < 0):
                 entity.lastMove = 'up'
             else:
                 entity.lastMove = 'down'
 
-            #print('Entité :',entity.__class__.__name__,'| Temps écoulé :',round(t, 2),'| Vitesse :',round(entity.speed, 2),'| Move :', round(entity.speed * t, 2))
+            #print('Entité :',entity.__class__.__name__,'| Temps écoulé :',round(t, 2),'| Vitesse :',round(entity.speedY, 2),'| Move :', round(entity.speedY * t, 2))
             salle.coords(entity.image, entity.x, entity.y)
             salle.update()
             checkHitbox()
             time.sleep(0.001)
         entity.isFalling = False
-        entity.speed = 20
+        entity.speedY = 20
 
 """
 #--------------------------------------------------------------------------------------#
@@ -293,13 +293,13 @@ def checkHitbox():
     #Collisions entre le cube et le dude
     if(getHitbox(cube).perspective(getHitbox(dude))):
         if(dude.lastMove == 'up'):
-            cube.move(cube.x, cube.y-dude.speed)
+            cube.move(cube.x, cube.y-dude.speedY)
         elif(dude.lastMove == 'down'):
-            cube.move(cube.x, cube.y+dude.speed)
+            cube.move(cube.x, cube.y+dude.speedY)
         elif(dude.lastMove == 'right'):
-            cube.move(cube.x+dude.speed, cube.y)
+            cube.move(cube.x+dude.speedX, cube.y)
         elif(dude.lastMove == 'left'):
-            cube.move(cube.x-dude.speed, cube.y)
+            cube.move(cube.x-dude.speedX, cube.y)
 
     #Met le Cube ou le Dude en premier plan en fonction de qui est devant l'autre
     if(dude.y+dude.height > cube.y+cube.height):
@@ -331,11 +331,11 @@ def checkPortalCollision(entity):
 
             #On modifie les vitesses en fonction de là où il sort
             if(getHitbox(portal).intersects(floor)):
-                entity.speed = -entity.speed
+                entity.speedY = -entity.speedY
             elif getHitbox(portal).intersects(leftWall):
-                entity.speedX = entity.speed
+                entity.speedX = entity.speedY
             elif getHitbox(portal).intersects(rightWall):
-                entity.speedX = -entity.speed
+                entity.speedX = -entity.speedY
                 
         else:
             #L'entité n'est pas téléporté et a atteint le sol, on arrête de la faire tomber
