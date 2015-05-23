@@ -61,16 +61,19 @@ class Dude():
     def __init__(self, x, y):
         self.x = x
         self.y = y
-        self.photo = PhotoImage(file="dude_gris.gif")
-        self.image = salle.create_image(self.x, self.y, image=self.photo, anchor=NW)
-        self.width = self.photo.width() - self.photo.width()/4
-        self.height = self.photo.height()
+        self.setImage("dude_gris.gif")
         self.debug = 0
         self.speed = 20
         self.speedX = 0
         self.isFalling = False
         self.stop = True
         self.lastMove = ''
+
+    def setImage(self, name):
+        self.photo = PhotoImage(file=name)
+        self.image = salle.create_image(self.x, self.y, image=self.photo, anchor=NW)
+        self.width = self.photo.width() - self.photo.width()/4
+        self.height = self.photo.height()
 
     #Mouvements
     def move(self, event):
@@ -209,10 +212,7 @@ def createPortal(event, color):
             orangePortal = Portal([x, y], '#ff6600', True)
             name = "dude_orange.gif"
 
-        dude.photo = PhotoImage(file=name)
-        dude.image = salle.create_image(dude.x, dude.y, image=dude.photo, anchor=NW)
-        dude.width = dude.photo.width()
-        dude.height = dude.photo.height()
+        dude.setImage(name)
 
         salle.tag_raise(dude.image)
         
