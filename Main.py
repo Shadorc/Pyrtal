@@ -242,6 +242,7 @@ def teleport(entity, x, y):
 def momentum(entity):
         entity.isFalling = True
         start = time.time()
+        
         while(entity.stop == False):
             #Temps écoulé en seconde depuis la dernière boucle
             t = (time.time() - start)*10
@@ -264,20 +265,14 @@ def momentum(entity):
                 entity.speedY = 0
                 #Au cas où l'entité est dans le plafond, la descendre
                 entity.y = ceiling.height+1
+            #Si l'entité touche un mur et qu'il ne vient pas de sortir d'un portail, on annule sa vitesse en X
             elif((getHitbox(entity).intersects(secondLeftWall) or getHitbox(entity).intersects(secondRightWall)) and (getHitbox(entity).intersects(bluePortal) or getHitbox(entity).intersects(orangePortal)) == False):
                 entity.speedX = 0
 
-                
-            if(entity.speedY < 0):
-                entity.lastMove = 'up'
-            else:
-                entity.lastMove = 'down'
-
-            #print('Entité :',entity.__class__.__name__,'| Temps écoulé :',round(t, 2),'| Vitesse :',round(entity.speedY, 2),'| Move :', round(entity.speedY * t, 2))
             salle.coords(entity.image, entity.x, entity.y)
             salle.update()
             checkHitbox()
-            time.sleep(0.001)
+
         entity.isFalling = False
         entity.speedX = 0
         entity.speedY = 0
@@ -346,6 +341,12 @@ def checkPortalCollision(entity):
         else:
             #L'entité n'est pas téléporté et a atteint le sol, on arrête de la faire tomber
             entity.stop = True
+
+"""
+#--------------------------------------------------------------------------------------#
+#-------------------------------------FENETRE------------------------------------------#
+#--------------------------------------------------------------------------------------#
+"""
     
 frameW = 1000
 frameH = 900
@@ -387,8 +388,6 @@ salle.bind("<Button-1>", createBluePortal)
 salle.bind("<Button-3>", createOrangePortal)
 salle.bind("<KeyPress>", dude.move)
 
-chaine = Label(frame)
-chaine.pack()
 salle.pack()
 
 frame.mainloop()
