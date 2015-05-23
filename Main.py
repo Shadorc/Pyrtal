@@ -367,7 +367,7 @@ orangePortal = None
 salle.create_rectangle(125,788,875,112)
 
 floor = Rect(0, 788, frameW, 125)
-ceiling = Rect(0, 0, frameW, 125)
+ceiling = Rect(0, 0, frameW, 112)
 leftWall = Rect(0, 0, 125, frameH)
 rightWall = Rect(875, 0, 125, frameH)
 
