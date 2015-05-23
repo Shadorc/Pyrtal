@@ -171,7 +171,6 @@ def createPortal(event, color):
         simulPortal = Portal([x, y], color, False)
 
         if((getHitbox(simulPortal).intersects(floor) or getHitbox(simulPortal).intersects(ceiling)) and (getHitbox(simulPortal).intersects(leftWall) or getHitbox(simulPortal).intersects(rightWall))):
-            print('return')
             return
 
         #Vérifie si le portail qui va être créé n'est pas posé par dessus le deuxième
@@ -226,15 +225,13 @@ def createPortal(event, color):
 
 def getHitbox(entity):
         return Rect(entity.x, entity.y, entity.width, entity.height)
-        
-#FIXME: Eviter que l'entité se téléporte en boucle (sera corrigé avec l'axe z)
+
 def teleport(entity, x, y):
         entity.stop = False
         entity.x = x
         entity.y = y
         salle.coords(entity.image, entity.x, entity.y)
         salle.tag_raise(entity.image)
-        #TODO: Essayer de ne plus utiliser de Thread
         if(entity.isFalling == False):
             momentum(entity)
             #t = threading.Thread(target=momentum, args=(entity,))
@@ -355,8 +352,6 @@ salle = Canvas(frame, width=frameW, height=frameH)
 
 bluePortal = None
 orangePortal = None
-
-#TODO: faire une vraie salle avec de vrais murs (collisions)
 
 #Fond de la salle
 salle.create_rectangle(125,788,875,112)
