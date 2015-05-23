@@ -264,8 +264,9 @@ def momentum(entity):
                 entity.speedY = 0
                 #Au cas où l'entité est dans le plafond, la descendre
                 entity.y = ceiling.height+1
-            elif getHitbox(entity).intersects(secondLeftWall) or getHitbox(entity).intersects(secondRightWall):
-                entity.speedX = 0 
+            elif((getHitbox(entity).intersects(secondLeftWall) or getHitbox(entity).intersects(secondRightWall)) and (getHitbox(entity).intersects(bluePortal) or getHitbox(entity).intersects(orangePortal)) == False):
+                entity.speedX = 0
+
                 
             if(entity.speedY < 0):
                 entity.lastMove = 'up'
