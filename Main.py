@@ -17,7 +17,7 @@ class Portal():
         self.elements = []
         
         #Sol & Plafond : Portail horizontal
-        if(self.centerY < 125 or self.centerY > 788):
+        if(self.centerY > floor.y or self.centerY < ceiling.y+ceiling.height):
             self.width = 300
             self.height = 110
         else:
@@ -365,17 +365,17 @@ salle.create_rectangle(125,788,875,112)
 floor = Rect(0, 788, frameW, 125)
 ceiling = Rect(0, 0, frameW, 125)
 leftWall = Rect(0, 0, 125, frameH)
-rightWall = Rect(frameW-125, 0, 125, frameH)
+rightWall = Rect(875, 0, 125, frameH)
 
 """Effet de profondeur (lignes diagonales)"""
 #Bas gauche
-salle.create_line(0, frameH, 125, 788)
+salle.create_line(0, frameH, leftWall.width, floor.y)
 #Bas droit
-salle.create_line(frameW, frameH, 875, 788)
+salle.create_line(frameW, frameH, rightWall.x, floor.y)
 #Haut droit
-salle.create_line(frameW, 0, 875, 112)
+salle.create_line(frameW, 0, rightWall.x, ceiling.height)
 #Haut gauche
-salle.create_line(0, 0, 125, 112)
+salle.create_line(0, 0, leftWall.width, ceiling.height)
 
 #Focus sur la fenêtre pour pouvoir recevoir les clics de souris et l'appuie de touches
 salle.focus_set()
