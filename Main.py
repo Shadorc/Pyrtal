@@ -29,8 +29,8 @@ class Portal():
         self.y = self.centerY-self.height/2
 
         #Coordonnées de l'angle en bas à droite
-        self.botX = self.centerX+self.width/2
-        self.botY = self.centerY+self.height/2
+        self.botX = self.x+self.width
+        self.botY = self.y+self.height
         
         #Epaisseur du portail
         thickness = 5
@@ -42,9 +42,6 @@ class Portal():
 
             #Hitbox Portail
             self.elements += [salle.create_rectangle(self.x, self.y, self.botX, self.botY)]
- 
-            salle.tag_raise(dude.image)
-            salle.tag_raise(cube.image)
        
     def delete(self):
         #Efface tous les éléments contenus dans la liste
@@ -218,6 +215,7 @@ def createPortal(x, y, color):
 
         dude.setImage(name)
         salle.tag_raise(dude.image)
+        salle.tag_raise(cube.image)
         checkHitbox()
 
 """
