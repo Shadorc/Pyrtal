@@ -287,7 +287,7 @@ def momentum(entity):
             if(getHitbox(entity).intersects(secondCeiling)):
                 entity.speedY = 0
                 #Au cas où l'entité est dans le plafond, la descendre
-                entity.y = ceiling.height+1
+                entity.y = secondCeiling.height+1
             #Si l'entité touche un mur et qu'il ne vient pas de sortir d'un portail, on annule sa vitesse en X
             elif((getHitbox(entity).intersects(secondLeftWall) or getHitbox(entity).intersects(secondRightWall)) and (getHitbox(entity).intersects(bluePortal) or getHitbox(entity).intersects(orangePortal)) == False):
                 entity.speedX = 0
