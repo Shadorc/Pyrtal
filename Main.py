@@ -166,6 +166,12 @@ def createPortal(x, y, color):
             portal = orangePortal
             otherPortal = bluePortal
 
+        if((leftWall.width < x < rightWall.x) and (ceiling.height < y < floor.y)):
+            if(y+150 > floor.y):
+                y = y - (y+150 - floor.y)
+            elif(y-150 < ceiling.height):
+                y = y - (y-150 - ceiling.height)
+
         #Créé un faux portail pour voir s'il peut être posé 
         simulPortal = Portal([x, y], color, False)
 
