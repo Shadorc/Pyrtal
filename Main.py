@@ -243,11 +243,13 @@ def momentum(entity):
         entity.isFalling = True
         start = time.time()
         while(entity.stop == False):
-            t = time.time() - start
+            #Temps écoulé en seconde depuis la dernière boucle
+            t = (time.time() - start)*10
             start = time.time()
-            t = t*10
-            a = 9.81
             
+            a = 9.81
+
+            #On limite la vitesse maximale à 200
             if(abs(entity.speedY < 200)):
                 entity.speedY = a * t + entity.speedY
                 
@@ -257,8 +259,8 @@ def momentum(entity):
             secondCeiling = Rect(ceiling.x, ceiling.y, ceiling.width, ceiling.height/2)
             secondLeftWall = Rect(leftWall.x, leftWall.y, leftWall.width/2, leftWall.height)
             secondRightWall = Rect(rightWall.x+rightWall.width/2, rightWall.y, rightWall.width/2, rightWall.height) 
-            
-            if getHitbox(entity).intersects(secondCeiling):
+
+            if(getHitbox(entity).intersects(secondCeiling)):
                 entity.speedY = 0
                 #Au cas où l'entité est dans le plafond, la descendre
                 entity.y = ceiling.height+1
