@@ -69,6 +69,7 @@ class Dude():
         self.isFalling = False
         self.stop = True
         self.lastMove = ''
+        self.lastShoot = 0 #Dernière fois que le dude a placé un portail
 
     def setImage(self, name):
         self.photo = PhotoImage(file=name)
@@ -147,19 +148,19 @@ class Cube():
 #--------------------------------------------------------------------------------------#
 """
 
-#Heure et temps de recharge en seconde
-lastShoot = time.time()
-reloadingTime = 0.1
+def createBluePortal(event):
+    createPortal(event.x, event.y, 'blue')
+
+def createOrangePortal(event):
+    createPortal(event.x, event.y, 'orange')
 
 #Créer un Portail
-def createPortal(event, color):
-    global lastShoot, bluePortal, orangePortal, dude
+def createPortal(x, y, color):
+    global bluePortal, orangePortal, dude
 
-    if(time.time() - lastShoot > reloadingTime):
-        lastShoot = time.time()
-
-        x = event.x
-        y = event.y
+    #Le dude ne peut tirer qu'un portail toutes les 100ms
+    if((time.time() - dude.lastShoot) >= 0.1):
+        dude.lastShoot = time.time()
 
         if(color == 'blue'):
             portal = bluePortal
@@ -171,6 +172,7 @@ def createPortal(event, color):
         #Créé un faux portail pour voir s'il peut être posé 
         simulPortal = Portal([x, y], color, False)
 
+        #Si le portail est placé dans un angle, ne pas le poser
         if((getHitbox(simulPortal).intersects(floor) or getHitbox(simulPortal).intersects(ceiling)) and (getHitbox(simulPortal).intersects(leftWall) or getHitbox(simulPortal).intersects(rightWall))):
             return
 
@@ -181,8 +183,10 @@ def createPortal(event, color):
             differenceX = simulPortal.centerX - otherPortal.centerX
             #Distance entre le centreY des deux portails
             differenceY = simulPortal.centerY - otherPortal.centerY
-            
-            if(abs(differenceX) < otherPortal.width and abs(differenceY) < otherPortal.height):
+
+            #Si les deux portails se superposent, on décale le nouveau portail de sorte à ce qu'il se colle à l'autre
+            if(getHitbox(simulPortal).intersects(getHitbox(otherPortal))):
+                
                 if(sqrt((differenceX)**2 + (differenceY)**2) < otherPortal.height-50):
                     #Si le portail vient de la droite, ajouter la différence pour le coller contre le bord droite
                     if(differenceX >= 0):
@@ -213,9 +217,7 @@ def createPortal(event, color):
             name = "dude_orange.gif"
 
         dude.setImage(name)
-
         salle.tag_raise(dude.image)
-        
         checkHitbox()
 
 """
@@ -378,8 +380,8 @@ dude = Dude(450, 700)
 cube = Cube(600, 800)
 
 #Configure les touches souris / clavier
-salle.bind("<Button-1>", lambda event: createPortal(event, 'blue'))
-salle.bind("<Button-3>", lambda event: createPortal(event, 'orange'))
+salle.bind("<Button-1>", createBluePortal)
+salle.bind("<Button-3>", createOrangePortal)
 salle.bind("<KeyPress>", dude.move)
 
 chaine = Label(frame)
