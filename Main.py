@@ -63,8 +63,9 @@ class Dude():
         self.y = y
         self.setImage("dude_gris.gif")
         self.debug = 0
-        self.speedY = 20
-        self.speedX = 20
+        self.moveSpeed = 20
+        self.speedY = 0
+        self.speedX = 0
         self.isFalling = False
         self.stop = True
         self.lastMove = ''
@@ -79,19 +80,19 @@ class Dude():
     def move(self, event):
         #Haut
         if (event.char == 'z') and (floor.y < self.y+self.height-20):
-            self.y -= abs(self.speedY)
+            self.y -= self.moveSpeed
             self.lastMove = 'up'
         #Bas
         elif (event.char == 's') and (self.y+self.height < floor.y+floor.height):
-            self.y += abs(self.speedY)
+            self.y += self.moveSpeed
             self.lastMove = 'down'
         #Gauche
         elif (event.char == 'q') and (floor.x+40 < self.x-self.width):
-            self.x -= abs(self.speedX)
+            self.x -= self.moveSpeed
             self.lastMove = 'left'
         #Droite
         elif (event.char == 'd') and (self.x+self.width < floor.width-rightWall.width):
-            self.x += abs(self.speedX)
+            self.x += self.moveSpeed
             self.lastMove = 'right'
         #The Game Easter Egg
         elif (event.char == ' '):
@@ -129,7 +130,7 @@ class Cube():
         self.image = salle.create_image(self.x, self.y, image=self.photo, anchor=NW)
         self.width = self.photo.width()
         self.height = self.photo.height()
-        self.speedY = 20
+        self.speedY = 0
         self.speedX = 0
         self.isFalling = False
         self.stop = True
@@ -262,7 +263,6 @@ def momentum(entity):
             elif getHitbox(entity).intersects(secondLeftWall) or getHitbox(entity).intersects(secondRightWall):
                 entity.speedX = 0 
                 
-            
             if(entity.speedY < 0):
                 entity.lastMove = 'up'
             else:
@@ -274,7 +274,8 @@ def momentum(entity):
             checkHitbox()
             time.sleep(0.001)
         entity.isFalling = False
-        entity.speedY = 20
+        entity.speedX = 0
+        entity.speedY = 0
 
 """
 #--------------------------------------------------------------------------------------#
@@ -293,13 +294,13 @@ def checkHitbox():
     #Collisions entre le cube et le dude
     if(getHitbox(cube).perspective(getHitbox(dude))):
         if(dude.lastMove == 'up'):
-            cube.move(cube.x, cube.y-dude.speedY)
+            cube.move(cube.x, cube.y-dude.moveSpeed)
         elif(dude.lastMove == 'down'):
-            cube.move(cube.x, cube.y+dude.speedY)
+            cube.move(cube.x, cube.y+dude.moveSpeed)
         elif(dude.lastMove == 'right'):
-            cube.move(cube.x+dude.speedX, cube.y)
+            cube.move(cube.x+dude.moveSpeed, cube.y)
         elif(dude.lastMove == 'left'):
-            cube.move(cube.x-dude.speedX, cube.y)
+            cube.move(cube.x-dude.moveSpeed, cube.y)
 
     #Met le Cube ou le Dude en premier plan en fonction de qui est devant l'autre
     if(dude.y+dude.height > cube.y+cube.height):
