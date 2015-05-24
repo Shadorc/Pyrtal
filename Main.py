@@ -61,7 +61,6 @@ class Dude():
         self.speedY = 0
         self.speedX = 0
         self.isFalling = False
-        self.stop = True
         self.lastMove = ''
         self.lastShoot = 0 #Dernière fois que le dude a placé un portail
 
@@ -123,7 +122,6 @@ class Cube():
         self.speedY = 0
         self.speedX = 0
         self.isFalling = False
-        self.stop = True
 
     def move(self, x, y):
         #On vérifie si le cube peut bouger c'est à dire qu'il ne sort pas du sol
@@ -254,7 +252,6 @@ def getHitbox(entity):
 
 #Téléporte l'entité aux coordonnées x et y
 def teleport(entity, x, y):
-        entity.stop = False
         entity.x = x
         entity.y = y
         salle.coords(entity.image, entity.x, entity.y)
@@ -269,7 +266,7 @@ def momentum(entity):
         start = time.time()
 
         #Tant que l'entité n'a pas touché le sol
-        while(entity.stop == False):
+        while(entity.isFalling == True):
             #Temps écoulé en seconde depuis la dernière boucle
             t = (time.time() - start)*10
             start = time.time()
@@ -299,7 +296,6 @@ def momentum(entity):
             salle.update()
             checkHitbox()
 
-        entity.isFalling = False
         entity.speedX = 0
         entity.speedY = 0
 
@@ -380,7 +376,7 @@ def checkPortalCollision(entity):
                 
         else:
             #L'entité n'est pas téléporté et a atteint le sol, on arrête de la faire tomber
-            entity.stop = True
+            entity.isFalling = False
 
 """
 #--------------------------------------------------------------------------------------#
