@@ -20,6 +20,7 @@ class Portal():
         if(self.centerY > floor.y or self.centerY < ceiling.y+ceiling.height):
             self.width = 300
             self.height = 110
+        #Sinon : Portail vértical
         else:
             self.width = 110
             self.height = 300
@@ -70,7 +71,6 @@ class Dude():
         self.width = self.photo.width() - self.photo.width()/4
         self.height = self.photo.height()
 
-    #Mouvements
     def move(self, event):
         #Haut
         if (event.char == 'z') and (floor.y < self.y+self.height-20):
@@ -126,6 +126,7 @@ class Cube():
         self.stop = True
 
     def move(self, x, y):
+        #On vérifie si le cube peut bouger c'est à dire qu'il ne sort pas du sol
         if(x > floor.x and x+self.width < floor.x+floor.width and y+self.height > floor.y and y+self.height < floor.y+floor.height):
             self.x = x
             self.y = y
@@ -133,7 +134,7 @@ class Cube():
 
 """
 #--------------------------------------------------------------------------------------#
-#----------------------------------------MAIN------------------------------------------#
+#----------------------------------PORTAILS METHODES-----------------------------------#
 #--------------------------------------------------------------------------------------#
 """
 
@@ -143,15 +144,6 @@ def createBluePortal(event):
 def createOrangePortal(event):
     createPortal(event.x, event.y, 'orange')
 
-def portalPlacement(coordinate, size, bound1, bound2):
-    if(coordinate+size > bound1):
-        return (coordinate - (coordinate+size - bound1))
-    elif(coordinate-size < bound2):
-        return (coordinate - (coordinate-size - bound2))
-    else:
-        return coordinate
-
-#Créer un Portail
 def createPortal(x, y, color):
     global bluePortal, orangePortal, dude
 
@@ -200,7 +192,8 @@ def createPortal(x, y, color):
 
             #Si les deux portails se superposent, on décale le nouveau portail de sorte à ce qu'il se colle à l'autre
             if(getHitbox(simulPortal).intersects(getHitbox(otherPortal))):
-                
+
+                #Si les portails se touchent par un côté
                 if(sqrt((differenceX)**2 + (differenceY)**2) < otherPortal.height-50):
                     #Si le portail vient de la droite, ajouter la différence pour le coller contre le bord droite
                     if(differenceX >= 0):
@@ -208,7 +201,8 @@ def createPortal(x, y, color):
                     #Si le portail vient de la gauche, soustraire la différence pour le coller sur le bord gauche
                     else:
                         x -= simulPortal.width - abs(differenceX)
-
+                        
+                #Sinon, c'est qu'ils se touchent par le dessus ou le dessous
                 else:
                     #Si le portail vient de la droite, ajouter la différence pour le coller contre le bord droite
                     if(differenceY >= 0):
@@ -225,31 +219,47 @@ def createPortal(x, y, color):
             name = "dude_bleu.gif"
 
         elif(color == 'orange'):
+            #Si le portail avait déjà été posé, l'effacer
             if(orangePortal != None):
                 orangePortal.delete() 
             orangePortal = Portal([x, y], '#ff6600', True)
             name = "dude_orange.gif"
 
         dude.setImage(name)
+        #On met le dude et le cube au premier plan
         salle.tag_raise(dude.image)
         salle.tag_raise(cube.image)
         checkHitbox()
 
+def portalPlacement(coordinate, size, bound1, bound2):
+    #Si le portail dépasse sur la droite ou vers le bas, on le remonte/le décale sur la gauche
+    if(coordinate+size > bound1):
+        return (coordinate - (coordinate+size - bound1))
+    #Si le portail dépasse sur la gauche ou vers le haut, on le descend/le décale sur la droite
+    elif(coordinate-size < bound2):
+        return (coordinate - (coordinate-size - bound2))
+    #Sinon, la coordonnée n'a pas besoin d'être changée
+    else:
+        return coordinate
+
 """
 #--------------------------------------------------------------------------------------#
-#----------------------------------METHODS ENTITIES------------------------------------#
+#----------------------------------METHODES ENTITES------------------------------------#
 #--------------------------------------------------------------------------------------#
 """
 
+#Retourne un rectangle représentant la zone de collision de l'entité
 def getHitbox(entity):
         return Rect(entity.x, entity.y, entity.width, entity.height)
 
+#Téléporte l'entité aux coordonnées x et y
 def teleport(entity, x, y):
         entity.stop = False
         entity.x = x
         entity.y = y
         salle.coords(entity.image, entity.x, entity.y)
         salle.tag_raise(entity.image)
+        #Si elle n'est pas déjà en train de chuter, on la fait tomber
         if(entity.isFalling == False):
             t = threading.Thread(target=momentum, args=(entity,))
             t.start()
@@ -257,7 +267,8 @@ def teleport(entity, x, y):
 def momentum(entity):
         entity.isFalling = True
         start = time.time()
-        
+
+        #Tant que l'entité n'a pas touché le sol
         while(entity.stop == False):
             #Temps écoulé en seconde depuis la dernière boucle
             t = (time.time() - start)*10
@@ -265,7 +276,7 @@ def momentum(entity):
             
             a = 9.81
 
-            #On limite la vitesse maximale à 200
+            #On limite la vitesse maximale à 500
             if(abs(entity.speedY < 500)):
                 entity.speedY = a * t + entity.speedY
                 
@@ -324,7 +335,7 @@ def checkHitbox():
         salle.tag_raise(cube.image)
     
 def checkPortalCollision(entity):
-    #Si l'entité a atteint le sol alors on check les portails
+    #Si l'entité a atteint le sol alors on vérifie la collision avec les portails
     if(getHitbox(entity).intersects(floor)):
 
         if(getHitbox(bluePortal).intersects(getHitbox(entity)) or getHitbox(orangePortal).intersects(getHitbox(entity))):
@@ -336,25 +347,30 @@ def checkPortalCollision(entity):
                 portal = bluePortal
 
             #On cherche où positionner l'entité par rapport au portail
+            #L'entité sort par le sol, on la place au dessus du portail et au centre
             if(getHitbox(portal).intersects(floor)):
                 y = portal.centerY-(entity.height+portal.height/2)-5
                 x = portal.centerX - entity.width/2
+            #L'entité sort par le plafond, on la place en dessous du portail et au centre
             elif(getHitbox(portal).intersects(ceiling)):
                 y = portal.centerY+(portal.height/2)+5
                 x = portal.centerX - entity.width/2
+            #L'entité sort par la gauche, on la place à droite du portail et au centre
             elif(getHitbox(portal).intersects(leftWall)):
                 y = portal.centerY-entity.height/2
                 x = portal.centerX + portal.width/2
+            #L'entité sort par la droite, on la place à gauche du portail et au centre
             elif(getHitbox(portal).intersects(rightWall)):
                 y = portal.centerY-entity.height/2
                 x = portal.centerX - portal.width/2
+            #Sinon l'entité sort par le fond de la salle, on la centre juste par rapport au portail
             else:
                 y = portal.centerY-entity.height/2
                 x = portal.centerX-entity.width/2
                 
             teleport(entity, x, y)
 
-            #On modifie les vitesses en fonction de là où il sort
+            #On modifie les vitesses en fonction de là où elle sort
             if(getHitbox(portal).intersects(floor)):
                 entity.speedY = -entity.speedY
             elif getHitbox(portal).intersects(leftWall):
