@@ -274,7 +274,7 @@ def momentum(entity):
             a = 9.81
 
             #On limite la vitesse maximale à 200
-            if(abs(entity.speedY < 200)):
+            if(abs(entity.speedY < 500)):
                 entity.speedY = a * t + entity.speedY
                 
             entity.y = entity.speedY * t + entity.y
