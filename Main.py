@@ -39,9 +39,6 @@ class Portal():
             #Dans l'angle supérieur gauche, il faut enlever du rayon, dans l'angle inférieur droit, il faut en rajouter
             self.elements += [salle.create_oval(self.x,           self.y,           self.botX,           self.botY,           fill=color)]
             self.elements += [salle.create_oval(self.x+thickness, self.y+thickness, self.botX-thickness, self.botY-thickness, fill='white')]
-
-            #Hitbox Portail
-            self.elements += [salle.create_rectangle(self.x, self.y, self.botX, self.botY)]
        
     def delete(self):
         #Efface tous les éléments contenus dans la liste
@@ -59,7 +56,6 @@ class Dude():
         self.x = x
         self.y = y
         self.setImage("dude_gris.gif")
-        self.debug = 0
         self.moveSpeed = 20
         self.speedY = 0
         self.speedX = 0
@@ -106,10 +102,6 @@ class Dude():
                 salle.coords(self.image, self.x, self.y)
                 salle.coords(text, self.x+100, self.y)
                 salle.update()
-
-        #Hitbox Dude
-        salle.delete(self.debug)
-        self.debug = salle.create_rectangle(self.x, self.y, self.x+self.width, self.y+self.height)
 
         salle.coords(self.image, self.x, self.y)
         checkHitbox()
