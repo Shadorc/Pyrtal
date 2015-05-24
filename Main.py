@@ -1,8 +1,8 @@
+from rectangle import *
 from tkinter import *
 from math import *
-from rectangle import *
-import time
 import threading
+import time
 
 """
 #--------------------------------------------------------------------------------------#
@@ -132,7 +132,7 @@ class Cube():
 
 """
 #--------------------------------------------------------------------------------------#
-#----------------------------------PORTAILS METHODES-----------------------------------#
+#----------------------------------METHODES PORTAILS-----------------------------------#
 #--------------------------------------------------------------------------------------#
 """
 
@@ -173,14 +173,14 @@ def createPortal(x, y, color):
         elif(leftWall.x < x < leftWall.x+leftWall.width):
             x = portalPlacement(x, 55, leftWall.x+leftWall.width, leftWall.x)
 
-        #Créé un faux portail pour voir s'il peut être posé 
+        #Créé un faux portail avec des coordonnées, une hauteur, une largeur, une hitbox, etc. pour pouvoir vérifier s'il peut être placé 
         simulPortal = Portal([x, y], color, False)
 
         #Si le portail est placé dans un angle, ne pas le poser
         if((getHitbox(simulPortal).intersects(floor) or getHitbox(simulPortal).intersects(ceiling)) and (getHitbox(simulPortal).intersects(leftWall) or getHitbox(simulPortal).intersects(rightWall))):
             return
 
-        #Vérifie si le portail qui va être créé n'est pas posé par dessus le deuxième
+        #Si un autre portail est placé, on vérifie si le portail qui va être créé n'est pas posé par dessus
         if(otherPortal != None):
             
             #Distance entre le centreX des deux portails
@@ -280,6 +280,7 @@ def momentum(entity):
             entity.y = entity.speedY * t + entity.y
             entity.x = entity.speedX * t + entity.x
 
+            #On veut que l'entité ne tape que la moitié du plafond ou des murs pour donner une impression de perspective
             secondCeiling = Rect(ceiling.x, ceiling.y, ceiling.width, ceiling.height/2)
             secondLeftWall = Rect(leftWall.x, leftWall.y, leftWall.width/2, leftWall.height)
             secondRightWall = Rect(rightWall.x+rightWall.width/2, rightWall.y, rightWall.width/2, rightWall.height) 
