@@ -87,20 +87,6 @@ class Dude():
         elif (event.char == 'd') and (self.x+self.width < floor.width-rightWall.width):
             self.x += self.moveSpeed
             self.lastMove = 'right'
-        #The Game Easter Egg
-        elif (event.char == ' '):
-            text = salle.create_text(self.x+100, self.y, text="The Game")
-            self.isFalling = True
-            start = time.time()
-            while(self.y > -self.height):
-                t = time.time() - start
-                g = 0.25
-                a = -g
-                self.speedY = a * t
-                self.y = self.speedY * t + self.y
-                salle.coords(self.image, self.x, self.y)
-                salle.coords(text, self.x+100, self.y)
-                salle.update()
 
         salle.coords(self.image, self.x, self.y)
         checkHitbox()
