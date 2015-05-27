@@ -20,7 +20,7 @@ class Portal():
         if(self.centerY > floor.y or self.centerY < ceiling.y+ceiling.height):
             self.width = 300
             self.height = 110
-        #Sinon : Portail vértical
+        #Sinon : Portail vertical
         else:
             self.width = 110
             self.height = 300
